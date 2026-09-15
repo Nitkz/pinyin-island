@@ -4,6 +4,7 @@
 @inject ISnackbar Snackbar
 @inject IJSRuntime JS
 @inject IProgressService ProgressService
+@inject HttpClient Http
 
 <PageTitle>เกาะมหาสมบัติพินอิน - Pinyin Island</PageTitle>
 
@@ -100,6 +101,7 @@
     <!-- Footer Wave / Soft Credit -->
     <footer class="landing-footer">
         <span>🏝️ ผจญภัยออกเสียงพินอิน สนุก ปลอดภัย สำหรับเด็กวัย 6-7 ขวบ</span>
+        <span class="version-badge" title="เวอร์ชันแอปพลิเคชัน">@_appVersion</span>
     </footer>
 </div>
 
@@ -477,7 +479,7 @@
     .landing-footer {
         z-index: 10;
         margin-top: 1rem;
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.88);
         backdrop-filter: blur(6px);
         padding: 0.4rem 1.2rem;
         border-radius: 999px;
@@ -486,6 +488,23 @@
         color: #37474F;
         border: 1px solid rgba(255, 255, 255, 0.6);
         text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .version-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #00796B;
+        background: #E0F2F1;
+        border: 1px solid #80CBC4;
+        padding: 2px 8px;
+        border-radius: 999px;
+        letter-spacing: 0.5px;
+        user-select: all;
     }
 
     /* Dialog Styles */
@@ -660,6 +679,7 @@
     private bool _isMuted = false;
     private bool _resetDialogVisible = false;
     private string _mathAnswer = string.Empty;
+    private string _appVersion = "v1.0.0";
 
     private readonly DialogOptions _dialogOptions = new()
     {
@@ -668,6 +688,29 @@
         CloseButton = true,
         BackdropClick = false
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var res = await Http.GetFromJsonAsync<VersionResponse>("version.json");
+            if (!string.IsNullOrWhiteSpace(res?.Version))
+            {
+                _appVersion = res.Version.StartsWith("v", StringComparison.OrdinalIgnoreCase)
+                    ? res.Version
+                    : $"v{res.Version}";
+            }
+        }
+        catch
+        {
+            // Fallback to default version if file not present
+        }
+    }
+
+    private class VersionResponse
+    {
+        public string? Version { get; set; }
+    }
 
     private void StartGame()
     {
