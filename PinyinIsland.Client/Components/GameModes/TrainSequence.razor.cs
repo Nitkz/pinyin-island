@@ -63,11 +63,8 @@ public partial class TrainSequence : ComponentBase
             try
             {
                 await JS.InvokeVoidAsync("gameAudio.playSfx", "blockDrop");
-                if (!isLastBlock)
-                {
-                    // Pronounce the phonetic sound when picked
-                    await JS.InvokeVoidAsync("gameAudio.playPinyinAudio", letter);
-                }
+                // Pronounce the phonetic sound when picked (for every block)
+                await JS.InvokeVoidAsync("gameAudio.playPinyinAudio", letter);
             }
             catch { }
 
@@ -122,8 +119,8 @@ public partial class TrainSequence : ComponentBase
             CurrentLight = TrafficLightState.Green;
             StateHasChanged();
 
-            // Give a short pause before starting sequential read-along
-            await Task.Delay(400);
+            // Give sufficient pause for the last placed block's pronunciation to complete cleanly before read-along starts
+            await Task.Delay(900);
 
             // Step 1: Read-Along Sequential Sound (each wagon lights up and speaks completely with no mid-word cutoff!)
             for (int i = 0; i < PlacedLetters.Count; i++)
@@ -176,9 +173,15 @@ public partial class TrainSequence : ComponentBase
         }
         else
         {
-            // Error: Red signal light, cartoon shake, and return blocks
+            // Lock interaction first
             _hasFailed = true;
             _isLocked = true;
+            StateHasChanged();
+
+            // Allow the last placed block's pronunciation to finish cleanly before buzzer/shake
+            await Task.Delay(750);
+
+            // Error: Red signal light, cartoon shake, and play buzzer
             CurrentLight = TrafficLightState.Red;
             IsErrorShaking = true;
 
