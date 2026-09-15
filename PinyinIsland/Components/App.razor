@@ -15,7 +15,9 @@
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveWebAssembly" />
+    <div id="app">
+        <Routes @rendermode="InteractiveWebAssembly" />
+    </div>
     <script src="_framework/blazor.web.js"></script>
     <script src=@Assets["_content/MudBlazor/MudBlazor.min.js"]></script>
     <script src="js/gameAudio.js"></script>
