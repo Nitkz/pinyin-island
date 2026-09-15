@@ -32,47 +32,44 @@ pinyin-island/
 │
 ├── PinyinIsland.Client/        # Client Project (WebAssembly)
 │   ├── Models/                 # Data Models & DTOs
-│   │   ├── PinyinItem.cs       # ข้อมูลตัวอักษร เช่น Id, Char, Type, AudioPath
-│   │   ├── Question.cs         # คำถามแต่ละข้อ (ListenPick, Sequence, Match)
-│   │   ├── Stage.cs            # ข้อมูลด่าน 1-14 และเกาะ 1-4
-│   │   └── UserProgress.cs     # บันทึกสถานะการปลดล็อกด่านและดาว (0-3)
+│   │   ├── IslandModels.cs     # ข้อมูลเกาะ 1-4 และด่าน 1-14 (IslandInfo, StageInfo)
+│   │   ├── StageDataModels.cs  # คลังคำถาม (ListenPick, Sequence, MatchPairs)
+│   │   └── UserProgress.cs     # บันทึกสถานะปลดล็อกด่านและดาว (0-3)
 │   │
-│   ├── Services/               # Business Logic & Browser Interop
-│   │   ├── IAudioService.cs    # Interface เล่นเสียง SFX / Voice
-│   │   ├── AudioService.cs     # JSInterop ควบคุม Web Audio / Howler.js
-│   │   ├── IGameService.cs     # Interface ควบคุมคำถามและคำนวณดาว
-│   │   ├── GameService.cs      # Game State Machine
-│   │   └── ProgressService.cs  # เซฟ/โหลดสถิติลง LocalStorage
+│   ├── Services/               # Business Logic & Data Access
+│   │   ├── IProgressService.cs # Interface เซฟ/โหลดสถิติลง LocalStorage
+│   │   ├── ProgressService.cs  # จัดการคะแนน ดาว และการปลดล็อกด่าน
+│   │   ├── IStageDataService.cs# Interface โหลดคลังคำถาม stages.json
+│   │   └── StageDataService.cs # โหลดและแคชข้อมูล stages.json
 │   │
 │   ├── Components/             # Reusable UI สำหรับเด็ก ป.1
-│   │   ├── Common/
-│   │   │   ├── SpeakerButton.razor # ปุ่มลำโพงกลมขนาดใหญ่สำหรับกดฟังซ้ำ
-│   │   │   └── StarRating.razor    # แสดงผลดาว 1-3 ดาว
-│   │   ├── Dialogs/
-│   │   │   └── StageClearDialog.razor # MudDialog แจกดาวเมื่อจบด่าน
-│   │   └── GameModes/
-│   │       ├── ListenAndTap.razor  # โหมด 1: แตะการ์ดตามเสียง
-│   │       ├── TrainSequence.razor # โหมด 2: ลากต่อขบวนรถไฟ
-│   │       └── CardMatch.razor     # โหมด 3: จับคู่เสียง-การ์ด
+│   │   ├── StageClearDialog.razor # หน้าต่างแจกดาวและสรุปผลเมื่อจบด่าน
+│   │   └── GameModes/          # โหมดเกมหลัก 3 โหมด (แยกเป็น Sub-components)
+│   │       ├── ListenAndTap.razor  # โหมด 1: แตะการ์ดพาสเทลตามเสียง
+│   │       ├── TrainSequence.razor # โหมด 2: ลากต่อขบวนรถไฟพินอิน
+│   │       └── CardMatch.razor     # โหมด 3: เปิดการ์ด 3D จับคู่เสียง-รูป
 │   │
 │   ├── Pages/                  # หน้าจอหลักของเกม
 │   │   ├── Home.razor          # Title Screen (ปุ่มเริ่มเล่นใหญ่ๆ)
 │   │   ├── IslandMap.razor     # แผนที่เลือก 4 เกาะ / 14 ด่าน
-│   │   └── GamePlay.razor      # หน้าเล่นเกมหลัก (ผูก Route: /play/{stageId:int})
+│   │   ├── GamePlay.razor      # Shell หน้าเล่นเกมหลัก (ผูก Route: /play/{StageId:int})
+│   │   └── GamePlay.razor.cs   # Code-behind จัดการ Game State & Lifecycle
 │   │
 │   └── wwwroot/                # Static Assets (เข้าถึงผ่าน /assets/...)
 │       ├── assets/
 │       │   ├── audio/
-│       │   │   ├── initials/   # b.mp3, p.mp3, ...
-│       │   │   ├── finals/     # a.mp3, ai.mp3, v.mp3, ...
-│       │   │   └── sfx/        # correct.mp3, wrong.mp3, cheer.mp3
-│       │   ├── video/
-│       │   │   ├── initials/   # b.mp4, p.mp4, ...
-│       │   │   └── finals/     # a.mp4, ai.mp4, v.mp4, ...
+│       │   │   ├── initials/   # b.mp3, p.mp3, ... (23 ตัว)
+│       │   │   ├── finals/     # a.mp3, ai.mp3, vn.mp3, ... (24 ตัว)
+│       │   │   └── bgm-map.mp3 # เพลงประกอบแผนที่
+│       │   ├── videos/
+│       │   │   ├── initials/   # b.mp4, p.mp4, ... (23 คลิป)
+│       │   │   ├── finals/     # a.mp4, ai.mp4, vn.mp4, ... (24 คลิป)
+│       │   │   └── panda-waving.mp4
+│       │   ├── images/         # train-engine, train-carriage, card-back, block-base, ...
 │       │   └── data/
-│       │       └── stages.json # คลังข้อมูลด่านและคำถาม 53 ข้อ
+│       │       └── stages.json # คลังข้อมูลด่านและคำถาม 65 ข้อ (3 โหมด)
 │       └── js/
-│           └── audio-player.js # สคริปต์ JS จัดการเล่นเสียงแบบ Zero-Latency
+│           └── gameAudio.js    # Web Audio API Zero-Latency SFX & Video Controller
 │
 ├── PinyinIsland.slnx
 └── README.md

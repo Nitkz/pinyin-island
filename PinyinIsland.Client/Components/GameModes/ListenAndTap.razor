@@ -1,0 +1,224 @@
+<div class="mode-listen-tap-container">
+    <!-- Prompt Section: Giant Animated Speaker Button -->
+    <div class="prompt-section">
+        <div class="speaker-touch-target @(IsSpeakerAnimating ? "speaker-pulse" : "")"
+             @onclick="PlayAudio"
+             role="button"
+             tabindex="0"
+             aria-label="แตะเพื่อฟังเสียงพยัญชนะ">
+            
+            <div class="speaker-waves">
+                <span class="wave w1"></span>
+                <span class="wave w2"></span>
+                <span class="wave w3"></span>
+            </div>
+
+            <div class="speaker-3d-btn">
+                <img src="assets/images/speaker-btn.jpeg"
+                     alt="กดฟังเสียง"
+                     class="speaker-img" />
+            </div>
+        </div>
+
+        <div class="tap-hint-pill">
+            <span>🔊 แตะที่ลำโพงเพื่อฟังเสียงซ้ำได้นะจ๊ะ!</span>
+        </div>
+    </div>
+
+    <!-- Options Grid: Large Pastel Pinyin Cards -->
+    <div class="options-container">
+        @if (Question != null)
+        {
+            @for (int i = 0; i < Question.Options.Count; i++)
+            {
+                var option = Question.Options[i];
+                var cardStateClass = GetOptionCardStateClass(option);
+                var colorTheme = GetPastelCardColor(i);
+
+                <button type="button"
+                        class="tactile-pinyin-card @cardStateClass"
+                        style="--card-bg: @colorTheme.Bg; --card-border: @colorTheme.Border; --card-shadow: @colorTheme.Shadow; --card-text: @colorTheme.Text;"
+                        disabled="@IsDisabled"
+                        @onclick="() => SelectOption(option)"
+                        aria-label="ตัวอักษร @option">
+                    
+                    <div class="card-inner-block">
+                        <span class="pinyin-text">@option</span>
+                    </div>
+
+                    @if (SelectedOption == option && option == Question.CorrectAnswer)
+                    {
+                        <div class="correct-sparkle-badge">
+                            <span>✨ ถูกต้อง! ✨</span>
+                        </div>
+                    }
+                </button>
+            }
+        }
+    </div>
+</div>
+
+<style>
+    .mode-listen-tap-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 960px;
+    }
+
+    .prompt-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 28px;
+    }
+
+    .speaker-touch-target {
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .speaker-touch-target:hover {
+        transform: scale(1.05);
+    }
+
+    .speaker-3d-btn {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 6px solid #FFFFFF;
+        box-shadow: 0 12px 0 #EA580C, 0 16px 30px rgba(234, 88, 12, 0.4);
+        overflow: hidden;
+        background: #FFEDD5;
+        z-index: 2;
+    }
+
+    .speaker-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .speaker-waves {
+        position: absolute;
+        inset: -20px;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .wave {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 3px solid rgba(249, 115, 22, 0.4);
+        opacity: 0;
+    }
+
+    .speaker-pulse .w1 { animation: soundWave 1s infinite 0.1s; }
+    .speaker-pulse .w2 { animation: soundWave 1s infinite 0.3s; }
+    .speaker-pulse .w3 { animation: soundWave 1s infinite 0.5s; }
+
+    @@keyframes soundWave {
+        0% { transform: scale(0.9); opacity: 0.8; }
+        100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    .tap-hint-pill {
+        margin-top: 14px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid #FDBA74;
+        color: #C2410C;
+        font-weight: 800;
+        padding: 6px 20px;
+        border-radius: 9999px;
+        font-size: 1rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .options-container {
+        display: flex;
+        gap: 24px;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .tactile-pinyin-card {
+        position: relative;
+        min-width: 160px;
+        height: 180px;
+        border-radius: 28px;
+        background: var(--card-bg);
+        border: 5px solid var(--card-border);
+        box-shadow: 0 10px 0 var(--card-shadow), 0 14px 28px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .tactile-pinyin-card:active {
+        transform: translateY(6px);
+        box-shadow: 0 4px 0 var(--card-shadow), 0 8px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    .pinyin-text {
+        font-size: 4.5rem;
+        font-weight: 900;
+        color: var(--card-text);
+        text-shadow: 0 2px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .card-correct {
+        animation: correctBounce 0.6s ease;
+        background: linear-gradient(180deg, #DCFCE7 0%, #BBF7D0 100%) !important;
+        border-color: #4ADE80 !important;
+        box-shadow: 0 10px 0 #16A34A, 0 0 30px rgba(74, 222, 128, 0.8) !important;
+    }
+
+    .card-wrong {
+        animation: wrongShake 0.4s ease;
+        background: linear-gradient(180deg, #FEE2E2 0%, #FECACA 100%) !important;
+        border-color: #F87171 !important;
+        box-shadow: 0 10px 0 #DC2626, 0 0 20px rgba(239, 68, 68, 0.4) !important;
+    }
+
+    .correct-sparkle-badge {
+        position: absolute;
+        top: -16px;
+        background: #16A34A;
+        color: white;
+        padding: 4px 16px;
+        border-radius: 9999px;
+        font-size: 0.95rem;
+        font-weight: 800;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    @@keyframes correctBounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    @@keyframes wrongShake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-10px); }
+        40%, 80% { transform: translateX(10px); }
+    }
+
+    @@media (max-width: 768px) {
+        .tactile-pinyin-card {
+            min-width: 130px;
+            height: 150px;
+        }
+        .pinyin-text { font-size: 3.2rem; }
+        .speaker-3d-btn { width: 110px; height: 110px; }
+    }
+</style>

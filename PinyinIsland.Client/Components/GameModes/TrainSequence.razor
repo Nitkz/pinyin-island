@@ -1,0 +1,369 @@
+<div class="mode-sequence-container @(IsDeparting ? "train-depart-anim" : "") @(IsErrorShaking ? "train-shake-anim" : "")">
+    <div class="mode-header-badge">
+        <span class="mode-badge-icon">🚂</span>
+        <span class="mode-badge-title">เรียงลำดับขบวนรถไฟพินอิน</span>
+    </div>
+
+    <!-- Train & Wagons Track Track Container -->
+    <div class="train-track-view">
+        <div class="train-consist">
+            <!-- Train Engine (Side View Profile) -->
+            <div class="train-engine-side">
+                <img src="assets/images/train-engine.jpeg" alt="หัวรถไฟ" class="engine-img" />
+                <div class="steam-puff">💨</div>
+            </div>
+
+            <!-- Wagons with Empty / Placed Cargo Beds -->
+            @for (int i = 0; i < PlacedLetters.Count; i++)
+            {
+                var slotIndex = i;
+                var placedChar = PlacedLetters[slotIndex];
+
+                <div class="train-wagon-slot"
+                     @onclick="() => RemoveBlock(slotIndex)"
+                     title="@(placedChar != null ? "แตะเพื่อนำตัวอักษรออก" : "ช่องว่างสำหรับวางบล็อก")">
+                    <img src="assets/images/train-carriage.jpeg" alt="โบกี้รถไฟ" class="carriage-img" />
+                    
+                    @if (!string.IsNullOrEmpty(placedChar))
+                    {
+                        <div class="placed-block-item pop-in-anim">
+                            <img src="assets/images/block-base.jpeg" alt="บล็อก" class="block-bg-img" />
+                            <span class="block-char-text">@placedChar</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="wagon-target-guide">
+                            <span class="guide-number">@(slotIndex + 1)</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Railway Rails -->
+        <div class="railway-tracks">
+            <div class="rail-line top-rail"></div>
+            <div class="rail-ties">
+                @for (int r = 0; r < 14; r++)
+                {
+                    <span class="rail-tie"></span>
+                }
+            </div>
+            <div class="rail-line bottom-rail"></div>
+        </div>
+    </div>
+
+    <!-- Available Letter Blocks Dock -->
+    <div class="sequence-dock-area">
+        <div class="dock-instruction-pill">
+            <span>👇 แตะบล็อกเพื่อนำไปวางบนโบกี้รถไฟให้ถูกต้อง</span>
+        </div>
+
+        <div class="available-blocks-grid">
+            @foreach (var letter in AvailableLetters)
+            {
+                var charItem = letter;
+                <button type="button"
+                        class="tactile-block-btn"
+                        @onclick="() => PlaceBlock(charItem)"
+                        aria-label="วางตัวอักษร @charItem">
+                    <img src="assets/images/block-base.jpeg" alt="บล็อก" class="block-btn-bg" />
+                    <span class="block-btn-char">@charItem</span>
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .mode-sequence-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 1000px;
+    }
+
+    .mode-header-badge {
+        background: rgba(255, 255, 255, 0.94);
+        border: 3px solid #93C5FD;
+        border-radius: 9999px;
+        padding: 8px 26px;
+        box-shadow: 0 8px 20px rgba(0, 100, 200, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    .mode-badge-icon { font-size: 1.4rem; }
+    .mode-badge-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #1E40AF;
+    }
+
+    .train-track-view {
+        position: relative;
+        width: 100%;
+        overflow-x: auto;
+        padding: 20px 10px 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .train-consist {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        position: relative;
+        z-index: 2;
+        margin-bottom: -15px;
+    }
+
+    /* Train Engine Side profile crop */
+    .train-engine-side {
+        width: 140px;
+        height: 130px;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .train-engine-side .engine-img {
+        position: absolute;
+        right: -8px;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 130px;
+        mix-blend-mode: multiply;
+        pointer-events: none;
+    }
+
+    .steam-puff {
+        position: absolute;
+        top: -5px;
+        right: 40px;
+        font-size: 1.5rem;
+        animation: puffAnim 1.5s infinite;
+    }
+
+    @@keyframes puffAnim {
+        0% { transform: translateY(0) scale(0.8); opacity: 0.8; }
+        100% { transform: translateY(-20px) scale(1.4); opacity: 0; }
+    }
+
+    /* Train Wagon Slots */
+    .train-wagon-slot {
+        width: 110px;
+        height: 120px;
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: transform 0.15s ease;
+    }
+
+    .train-wagon-slot:hover {
+        transform: translateY(-3px);
+    }
+
+    .train-wagon-slot .carriage-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+        pointer-events: none;
+    }
+
+    .placed-block-item {
+        position: relative;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 38px;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .placed-block-item .block-bg-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+    }
+
+    .placed-block-item .block-char-text {
+        position: relative;
+        z-index: 3;
+        font-size: 2.4rem;
+        font-weight: 900;
+        color: #6D28D9;
+        text-shadow: 0 2px 0 rgba(255,255,255,0.9);
+    }
+
+    .wagon-target-guide {
+        position: relative;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 42px;
+        border: 2px dashed #94A3B8;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.4);
+    }
+
+    .guide-number {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #64748B;
+    }
+
+    /* Railway Rails */
+    .railway-tracks {
+        position: relative;
+        width: 100%;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .rail-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: #94A3B8;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .top-rail { top: 4px; }
+    .bottom-rail { bottom: 4px; }
+
+    .rail-ties {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+    }
+
+    .rail-tie {
+        width: 10px;
+        height: 24px;
+        background: #8D6E63;
+        border-radius: 2px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Sequence Available Blocks Dock */
+    .sequence-dock-area {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .dock-instruction-pill {
+        background: rgba(255, 255, 255, 0.92);
+        border: 2px solid #C4B5FD;
+        color: #6D28D9;
+        font-weight: 800;
+        padding: 6px 22px;
+        border-radius: 9999px;
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .available-blocks-grid {
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .tactile-block-btn {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .tactile-block-btn:hover {
+        transform: scale(1.08) translateY(-4px);
+    }
+
+    .tactile-block-btn:active {
+        transform: scale(0.92);
+    }
+
+    .block-btn-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+        filter: drop-shadow(0 6px 8px rgba(0,0,0,0.2));
+    }
+
+    .block-btn-char {
+        position: relative;
+        z-index: 2;
+        font-size: 2.8rem;
+        font-weight: 900;
+        color: #5B21B6;
+        text-shadow: 0 2px 0 rgba(255,255,255,0.9), 0 4px 10px rgba(91,33,182,0.3);
+    }
+
+    /* Train Departure Animation */
+    .train-depart-anim {
+        animation: trainRollOff 1.8s forwards cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    @@keyframes trainRollOff {
+        0% { transform: translateX(0); }
+        20% { transform: translateX(-30px); }
+        100% { transform: translateX(120vw); opacity: 0; }
+    }
+
+    .train-shake-anim {
+        animation: wrongShake 0.4s ease;
+    }
+
+    .pop-in-anim {
+        animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @@keyframes popIn {
+        0% { transform: scale(0.4); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @@media (max-width: 768px) {
+        .train-engine-side { width: 110px; height: 100px; }
+        .train-engine-side .engine-img { height: 100px; }
+        .train-wagon-slot { width: 90px; height: 100px; }
+        .placed-block-item { width: 50px; height: 50px; margin-bottom: 30px; }
+        .placed-block-item .block-char-text { font-size: 1.8rem; }
+        .tactile-block-btn { width: 64px; height: 64px; }
+        .block-btn-char { font-size: 2.2rem; }
+    }
+</style>

@@ -22,3 +22,19 @@ public class StageInfo
     public string GameMode { get; set; } = "Listen & Tap";
     public int RequiredStarsToUnlock { get; set; } = 0;
 }
+
+public class QuestionItem
+{
+    public int QuestionId { get; set; }
+    public string Type { get; set; } = "listen_pick"; // listen_pick, pick_sound, sequence, card_match
+    public string TargetLetter { get; set; } = "";
+    public string CorrectAnswer { get; set; } = "";
+    public string? PromptText { get; set; }
+    public string? PromptAudio { get; set; }
+    public string? ThaiSound { get; set; }
+    public List<string> Options { get; set; } = new();
+    public List<string>? OptionsAudio { get; set; }
+    public List<string> SequenceItems { get; set; } = new();
+    public List<string> CorrectOrder { get; set; } = new();
+    public List<CardMatchPair> Pairs { get; set; } = new();
+}
