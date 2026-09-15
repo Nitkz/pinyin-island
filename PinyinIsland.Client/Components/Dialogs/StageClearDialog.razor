@@ -112,6 +112,32 @@
             }
         </div>
 
+        <!-- Cheering Panda Pirate Mascot & Speech Bubble -->
+        <div class="mascot-cheer-section">
+            <div class="mascot-cheer-avatar-wrap">
+                <img src="assets/images/panda-pirate.jpeg" alt="น้องหมีแพนด้าโจรสลัด" class="mascot-cheer-avatar" />
+                <span class="mascot-cheer-sparkle">✨</span>
+            </div>
+            <div class="mascot-cheer-bubble">
+                @if (IsBossStage)
+                {
+                    <span class="bubble-text"><strong>สุดยอดมาก!</strong> ปลดล็อกสมบัติเกาะนี้สำเร็จแล้ว! 👑🪙</span>
+                }
+                else if (StarsEarned == 3)
+                {
+                    <span class="bubble-text"><strong>ยอดเยี่ยมที่สุด!</strong> กะลาสีน้อยคว้า 3 ดาวเต็ม! 🌟</span>
+                }
+                else if (StarsEarned == 2)
+                {
+                    <span class="bubble-text"><strong>เก่งมากๆ เลย!</strong> เกือบได้ 3 ดาวเต็มแล้วนะ! 🐼</span>
+                }
+                else
+                {
+                    <span class="bubble-text"><strong>เก่งมาก!</strong> ลุยด่านต่อไปหรือกดเล่นอีกรอบได้นะ! 💪</span>
+                }
+            </div>
+        </div>
+
         <!-- Score / Feedback summary badge -->
         <div class="score-summary-pill">
             <span class="summary-icon">@(IsBossStage ? "👑" : "🏆")</span>
@@ -471,6 +497,90 @@
     }
 
     /* Summary pill */
+    /* Cheering Panda Pirate Mascot Showcase */
+    .mascot-cheer-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin: 12px auto 16px;
+        max-width: 440px;
+        padding: 4px 8px;
+    }
+
+    .mascot-cheer-avatar-wrap {
+        position: relative;
+        width: 72px;
+        height: 72px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        border: 4px solid #FFCA28;
+        box-shadow: 0 8px 18px rgba(255, 179, 0, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.8);
+        background: #FFF9C4;
+        animation: mascotCheerBob 2.2s ease-in-out infinite;
+    }
+
+    .mascot-cheer-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .mascot-cheer-sparkle {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        font-size: 1.3rem;
+        animation: sparkleSpin 2s linear infinite;
+    }
+
+    .mascot-cheer-bubble {
+        position: relative;
+        background: #FFFFFF;
+        border: 3px solid #FFD54F;
+        border-radius: 20px;
+        padding: 10px 16px;
+        text-align: left;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        font-size: 0.98rem;
+        color: #E65100;
+        line-height: 1.35;
+    }
+
+    .mascot-cheer-bubble::before {
+        content: '';
+        position: absolute;
+        left: -10px;
+        top: 50%;
+        transform: translateY(-50%);
+        border-width: 7px 10px 7px 0;
+        border-style: solid;
+        border-color: transparent #FFD54F transparent transparent;
+    }
+
+    .mascot-cheer-bubble::after {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 50%;
+        transform: translateY(-50%);
+        border-width: 5px 8px 5px 0;
+        border-style: solid;
+        border-color: transparent #FFFFFF transparent transparent;
+    }
+
+    @@keyframes mascotCheerBob {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-6px) rotate(4deg); }
+    }
+
+    @@keyframes sparkleSpin {
+        0% { transform: rotate(0deg) scale(0.9); }
+        50% { transform: rotate(180deg) scale(1.2); }
+        100% { transform: rotate(360deg) scale(0.9); }
+    }
+
     .score-summary-pill {
         display: inline-flex;
         align-items: center;

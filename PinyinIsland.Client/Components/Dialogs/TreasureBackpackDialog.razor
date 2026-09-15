@@ -9,7 +9,10 @@
         <!-- Modal Top Ribbon & Header -->
         <div class="backpack-header">
             <div class="header-title-box">
-                <div class="backpack-3d-badge">🎒</div>
+                <div class="backpack-panda-avatar-wrap">
+                    <img src="assets/images/panda-pirate.jpeg" alt="น้องหมีแพนด้าโจรสลัด" class="backpack-panda-avatar" />
+                    <span class="backpack-badge-icon">🎒</span>
+                </div>
                 <div class="header-text-group">
                     <h2 class="backpack-title">กระเป๋าสมบัติพินอิน</h2>
                     <p class="backpack-subtitle">สมุดสะสมเหรียญทองและอัญมณีพินอิน 47 ชิ้น</p>
@@ -184,17 +187,30 @@
         gap: 14px;
     }
 
-    .backpack-3d-badge {
-        font-size: 2.5rem;
-        background: #FFFFFF;
-        width: 56px;
-        height: 56px;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 6px 14px rgba(255, 160, 0, 0.35);
-        border: 2px solid #FFE082;
+    .backpack-panda-avatar-wrap {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 3px solid #FFA000;
+        box-shadow: 0 6px 14px rgba(255, 160, 0, 0.4);
+        background: #FFF9C4;
+        flex-shrink: 0;
+    }
+
+    .backpack-panda-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .backpack-badge-icon {
+        position: absolute;
+        bottom: -4px;
+        right: -4px;
+        font-size: 1.2rem;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
 
     .backpack-title {

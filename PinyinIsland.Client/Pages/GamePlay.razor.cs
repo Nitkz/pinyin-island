@@ -50,6 +50,32 @@ public partial class GamePlay : ComponentBase, IAsyncDisposable
     private int _lastLoadedStageId = -1;
     private bool _shouldAutoPlayFirstVideo = false;
 
+    // Mascot Buddy Cheer State
+    public bool BuddyBubbleVisible { get; private set; } = true;
+    public string CurrentBuddyCheer { get; private set; } = "สู้ๆ นะนักสำรวจน้อย! ✨";
+    private readonly string[] _buddyCheers = new[]
+    {
+        "สู้ๆ นะนักสำรวจน้อย! ✨",
+        "ค่อยๆ ฟังเสียงนะ เก่งอยู่แล้ว! 🎧",
+        "แตะเลือกคำตอบที่มั่นใจเลย! 🎯",
+        "กัปตันแพนด้าเอาใจช่วยอยู่นะ! 🐼🏴‍☠️",
+        "สุดยอดมาก ลุยต่อไปเลย! ⭐"
+    };
+    private int _cheerIndex = 0;
+
+    public async Task ToggleBuddySpeech()
+    {
+        _cheerIndex = (_cheerIndex + 1) % _buddyCheers.Length;
+        CurrentBuddyCheer = _buddyCheers[_cheerIndex];
+        BuddyBubbleVisible = true;
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.playSfx", "tap");
+        }
+        catch { }
+        StateHasChanged();
+    }
+
     public void HandleDevThemeChanged(int themeIslandId)
     {
         DevOverrideIslandTheme = themeIslandId;
