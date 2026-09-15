@@ -1,9 +1,34 @@
 <div class="mode-match-container">
-    <div class="mode-header-badge">
-        <span class="mode-badge-icon">🃏</span>
-        <span class="mode-badge-title">เปิดการ์ดจับคู่สระและเสียง (@MatchedPairsCount/@TotalRequiredPairs คู่)</span>
+    <!-- Top Stats Row: Pairs Matched, Flips Count, Score -->
+    <div class="match-stats-panel">
+        <div class="stat-pill stat-pairs">
+            <span class="stat-icon">🃏</span>
+            <span class="stat-label">จับคู่:</span>
+            <span class="stat-val">@MatchedPairsCount/@TotalRequiredPairs คู่</span>
+        </div>
+
+        <div class="stat-pill stat-flips">
+            <span class="stat-icon">🔄</span>
+            <span class="stat-label">เปิด:</span>
+            <span class="stat-val">@TotalFlipsCount ครั้ง</span>
+        </div>
+
+        <div class="stat-pill stat-score">
+            <span class="stat-icon">⭐</span>
+            <span class="stat-label">คะแนน:</span>
+            <span class="stat-val">@Score</span>
+        </div>
     </div>
 
+    <!-- Match & Combo Celebration Banner -->
+    @if (BannerTriggerKey > 0)
+    {
+        <div @key="BannerTriggerKey" class="combo-banner-pop @(IsComboActive ? "banner-combo-fire" : "banner-match-sparkle")">
+            <span>@BannerText</span>
+        </div>
+    }
+
+    <!-- Cards Grid -->
     <div class="card-match-grid">
         @foreach (var card in Cards)
         {
@@ -35,7 +60,7 @@
 
                         @if (c.IsMatched)
                         {
-                            <div class="match-success-badge">⭐</div>
+                            <div class="match-success-badge">✨ สำเร็จ!</div>
                         }
                     </div>
                 </div>
@@ -50,26 +75,109 @@
         flex-direction: column;
         align-items: center;
         width: 100%;
-        max-width: 880px;
+        max-width: 920px;
+        position: relative;
     }
 
-    .mode-header-badge {
-        background: rgba(255, 255, 255, 0.94);
-        border: 3px solid #93C5FD;
-        border-radius: 9999px;
-        padding: 8px 26px;
-        box-shadow: 0 8px 20px rgba(0, 100, 200, 0.15);
+    /* Stats Panel */
+    .match-stats-panel {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 24px;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 5;
     }
 
-    .mode-badge-icon { font-size: 1.4rem; }
-    .mode-badge-title {
-        font-size: 1.3rem;
+    .stat-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 2px solid #CBD5E1;
+        border-radius: 9999px;
+        padding: 8px 18px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         font-weight: 800;
+        font-size: 1.05rem;
+        transition: transform 0.15s ease;
+    }
+
+    .stat-pill:hover {
+        transform: translateY(-2px);
+    }
+
+    .stat-pairs {
+        border-color: #93C5FD;
         color: #1E40AF;
+        background: linear-gradient(180deg, #FFFFFF 0%, #EFF6FF 100%);
+    }
+
+    .stat-flips {
+        border-color: #FCD34D;
+        color: #B45309;
+        background: linear-gradient(180deg, #FFFFFF 0%, #FFFBEB 100%);
+    }
+
+    .stat-score {
+        border-color: #F87171;
+        color: #B91C1C;
+        background: linear-gradient(180deg, #FFFFFF 0%, #FEF2F2 100%);
+    }
+
+    .stat-icon {
+        font-size: 1.25rem;
+    }
+
+    .stat-label {
+        color: #64748B;
+        font-size: 0.95rem;
+    }
+
+    .stat-val {
+        font-size: 1.15rem;
+        font-weight: 900;
+    }
+
+    /* High-Visibility Center Floating Banner */
+    .combo-banner-pop {
+        position: fixed;
+        top: 25%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        pointer-events: none;
+        padding: 14px 34px;
+        border-radius: 9999px;
+        font-size: 1.45rem;
+        font-weight: 900;
+        text-align: center;
+        white-space: nowrap;
+        animation: superComboPop 1.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .banner-match-sparkle {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: #FFFFFF;
+        border: 3px solid #A7F3D0;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.6), 0 0 25px rgba(52, 211, 153, 0.5);
+    }
+
+    .banner-combo-fire {
+        background: linear-gradient(135deg, #FF3D00 0%, #FF9100 100%);
+        color: #FFFFFF;
+        border: 3px solid #FFF3E0;
+        box-shadow: 0 12px 35px rgba(255, 61, 0, 0.7), 0 0 35px rgba(255, 171, 0, 0.8);
+    }
+
+    @@keyframes superComboPop {
+        0% { transform: translate(-50%, 20px) scale(0.4); opacity: 0; }
+        20% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+        45% { transform: translate(-50%, -50%) scale(1.0); opacity: 1; }
+        75% { transform: translate(-50%, -65%) scale(1.0); opacity: 1; }
+        100% { transform: translate(-50%, -90%) scale(0.8); opacity: 0; }
     }
 
     .card-match-grid {
@@ -99,89 +207,109 @@
         transform: rotateY(180deg);
     }
 
+    .match-card-wrapper.matched .match-card-3d {
+        animation: cardMatchedPulse 0.6s ease;
+    }
+
+    @@keyframes cardMatchedPulse {
+        0% { transform: rotateY(180deg) scale(1); }
+        50% { transform: rotateY(180deg) scale(1.12); }
+        100% { transform: rotateY(180deg) scale(1); }
+    }
+
     .card-face {
         position: absolute;
         inset: 0;
+        width: 100%;
+        height: 100%;
         backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
         border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         overflow: hidden;
-        box-shadow: 0 8px 20px rgba(0, 60, 120, 0.25);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.18);
     }
 
     .card-face-back {
-        background: #0284C7;
-        border: 4px solid #38BDF8;
+        background: #3B82F6;
+        border: 4px solid #FFFFFF;
     }
 
     .card-back-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transform: scale(1.05);
     }
 
     .card-face-front {
         transform: rotateY(180deg);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border: 5px solid #CBD5E1;
-        background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+        border: 4px solid #FFFFFF;
+        position: relative;
     }
 
     .face-char {
-        border-color: #C084FC;
-        background: linear-gradient(180deg, #FAF5FF 0%, #F3E8FF 100%);
+        background: linear-gradient(135deg, #FFEDD5 0%, #FED7AA 100%);
+        border-color: #F97316;
+        color: #9A3412;
     }
 
     .face-sound {
-        border-color: #FCD34D;
-        background: linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%);
+        background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+        border-color: #0284C7;
+        color: #0369A1;
     }
 
     .match-pinyin-text {
-        font-size: 3.2rem;
+        font-size: 2.8rem;
         font-weight: 900;
-        color: #7E22CE;
+        line-height: 1.1;
     }
 
     .match-sound-icon {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
         margin-bottom: 2px;
     }
 
     .match-sound-text {
-        font-size: 1.7rem;
-        font-weight: 800;
-        color: #D97706;
+        font-size: 1.8rem;
+        font-weight: 900;
     }
 
     .card-sub-hint {
         font-size: 0.85rem;
-        font-weight: 800;
-        color: #94A3B8;
+        font-weight: 700;
+        opacity: 0.75;
         margin-top: 4px;
-    }
-
-    .match-card-wrapper.matched {
-        opacity: 0.65;
-        pointer-events: none;
     }
 
     .match-success-badge {
         position: absolute;
-        top: 6px;
-        right: 8px;
-        font-size: 1.4rem;
-        animation: starPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        bottom: 8px;
+        background: #10B981;
+        color: white;
+        padding: 2px 10px;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+        animation: pulseBadge 1.2s infinite alternate;
     }
 
-    @@keyframes starPop {
-        0% { transform: scale(0); }
-        100% { transform: scale(1); }
+    @@keyframes pulseBadge {
+        0% { transform: scale(0.95); }
+        100% { transform: scale(1.08); }
     }
 
-    @@media (max-width: 768px) {
-        .card-match-grid { grid-template-columns: repeat(2, 1fr); }
+    .match-card-wrapper.matched {
+        cursor: default;
+    }
+
+    .match-card-wrapper.matched .card-face-front {
+        border-color: #10B981;
+        box-shadow: 0 0 22px rgba(16, 185, 129, 0.55);
     }
 </style>

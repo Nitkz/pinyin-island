@@ -27,9 +27,19 @@ public partial class CardMatch : ComponentBase
     public List<MatchCard> CurrentlyFlippedCards { get; private set; } = new();
     public int MatchedPairsCount { get; private set; } = 0;
     public int TotalRequiredPairs { get; private set; } = 0;
+    
+    // Scoring & Attempts tracking
+    public int TotalFlipsCount { get; private set; } = 0;
+    public int MistakesCount { get; private set; } = 0;
+    public int ComboStreak { get; private set; } = 0;
+    public int Score { get; private set; } = 0;
+    
+    // Celebration Banner
+    public string BannerText { get; private set; } = "";
+    public bool IsComboActive { get; private set; } = false;
+    public int BannerTriggerKey { get; private set; } = 0;
 
     private bool _isLocked = false;
-    private bool _hasFailed = false;
     private int _lastQuestionId = -1;
 
     protected override void OnParametersSet()
@@ -47,31 +57,40 @@ public partial class CardMatch : ComponentBase
         Cards = new List<MatchCard>();
         CurrentlyFlippedCards = new List<MatchCard>();
         MatchedPairsCount = 0;
-        TotalRequiredPairs = Question.Pairs.Count;
+        TotalRequiredPairs = Question.Pairs?.Count ?? 0;
+        TotalFlipsCount = 0;
+        MistakesCount = 0;
+        ComboStreak = 0;
+        Score = 0;
+        BannerText = "";
+        IsComboActive = false;
+        BannerTriggerKey = 0;
         _isLocked = false;
-        _hasFailed = false;
 
-        foreach (var pair in Question.Pairs)
+        if (Question.Pairs != null)
         {
-            // Card A: Character card
-            Cards.Add(new MatchCard
+            foreach (var pair in Question.Pairs)
             {
-                CardType = "char",
-                DisplayText = pair.Char,
-                AudioPath = pair.Audio,
-                ThaiSound = pair.Thai,
-                MatchKey = pair.Char
-            });
+                // Card A: Character card
+                Cards.Add(new MatchCard
+                {
+                    CardType = "char",
+                    DisplayText = pair.Char,
+                    AudioPath = pair.Audio,
+                    ThaiSound = pair.Thai,
+                    MatchKey = pair.Char
+                });
 
-            // Card B: Sound/Thai card
-            Cards.Add(new MatchCard
-            {
-                CardType = "sound",
-                DisplayText = string.IsNullOrEmpty(pair.Thai) ? "🔊" : pair.Thai,
-                AudioPath = pair.Audio,
-                ThaiSound = pair.Thai,
-                MatchKey = pair.Char
-            });
+                // Card B: Sound/Thai card
+                Cards.Add(new MatchCard
+                {
+                    CardType = "sound",
+                    DisplayText = string.IsNullOrEmpty(pair.Thai) ? "🔊" : pair.Thai,
+                    AudioPath = pair.Audio,
+                    ThaiSound = pair.Thai,
+                    MatchKey = pair.Char
+                });
+            }
         }
 
         Cards = Cards.OrderBy(_ => rng.Next()).ToList();
@@ -84,6 +103,7 @@ public partial class CardMatch : ComponentBase
         // Flip card
         card.IsFlipped = true;
         CurrentlyFlippedCards.Add(card);
+        TotalFlipsCount++;
 
         try
         {
@@ -108,6 +128,22 @@ public partial class CardMatch : ComponentBase
                 first.IsMatched = true;
                 second.IsMatched = true;
                 MatchedPairsCount++;
+                ComboStreak++;
+
+                var pointsEarned = 100 + (ComboStreak > 1 ? (ComboStreak - 1) * 50 : 0);
+                Score += pointsEarned;
+
+                if (ComboStreak > 1)
+                {
+                    BannerText = $"🔥 COMBO x{ComboStreak}! +{pointsEarned} แต้ม 🔥";
+                    IsComboActive = true;
+                }
+                else
+                {
+                    BannerText = $"✨ จับคู่ถูกต้อง! +{pointsEarned} แต้ม";
+                    IsComboActive = false;
+                }
+                BannerTriggerKey++;
 
                 try
                 {
@@ -121,18 +157,27 @@ public partial class CardMatch : ComponentBase
                 if (MatchedPairsCount >= TotalRequiredPairs)
                 {
                     _isLocked = true;
-                    await Task.Delay(1000);
+                    await Task.Delay(1400);
+
+                    // Fair star criteria for memory cards:
+                    // Max allowed mistakes for full credit: max(2, TotalRequiredPairs - 1)
+                    var allowedMistakes = Math.Max(2, TotalRequiredPairs - 1);
+                    var isFirstTrySuccess = MistakesCount <= allowedMistakes;
+
                     if (OnQuestionCompleted.HasDelegate)
                     {
-                        await OnQuestionCompleted.InvokeAsync(!_hasFailed);
+                        await OnQuestionCompleted.InvokeAsync(isFirstTrySuccess);
                     }
                 }
             }
             else
             {
                 // NOT MATCHED
-                _hasFailed = true;
+                MistakesCount++;
+                ComboStreak = 0;
                 _isLocked = true;
+                StateHasChanged();
+
                 await Task.Delay(900);
 
                 first.IsFlipped = false;
