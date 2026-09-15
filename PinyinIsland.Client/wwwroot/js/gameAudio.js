@@ -139,33 +139,37 @@ window.gameAudio = {
             osc.start(now);
             osc.stop(now + 0.08);
         } else if (type === 'trainWhistle') {
-            // Cute train whistle "Choo-Choo / Toot-Toot" dual tone
-            var freqs = [660, 880];
-            freqs.forEach(function (f) {
-                var osc1 = ctx.createOscillator();
-                var gain1 = ctx.createGain();
-                osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(f, now);
-                osc1.frequency.linearRampToValueAtTime(f + 20, now + 0.25);
-                gain1.gain.setValueAtTime(0.2, now);
-                gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
-                osc1.connect(gain1);
-                gain1.connect(ctx.destination);
-                osc1.start(now);
-                osc1.stop(now + 0.28);
+            // Bright cheerful cartoon train whistle (Harmonic chord: D5 (587.33), A5 (880), D6 (1174.66))
+            var chords = [587.33, 880, 1174.66];
+            
+            // First Toot (Short)
+            chords.forEach(function (f) {
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(f, now);
+                osc.frequency.linearRampToValueAtTime(f + 15, now + 0.22);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            });
 
-                // Second toot
-                var osc2 = ctx.createOscillator();
-                var gain2 = ctx.createGain();
-                osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(f, now + 0.32);
-                osc2.frequency.linearRampToValueAtTime(f + 25, now + 0.65);
-                gain2.gain.setValueAtTime(0.25, now + 0.32);
-                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
-                osc2.connect(gain2);
-                gain2.connect(ctx.destination);
-                osc2.start(now + 0.32);
-                osc2.stop(now + 0.7);
+            // Second Toot (Long & Powerful)
+            chords.forEach(function (f) {
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(f, now + 0.28);
+                osc.frequency.linearRampToValueAtTime(f + 25, now + 0.85);
+                gain.gain.setValueAtTime(0.35, now + 0.28);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now + 0.28);
+                osc.stop(now + 0.9);
             });
         } else if (type === 'cardFlip') {
             // Quick whoosh/swish
