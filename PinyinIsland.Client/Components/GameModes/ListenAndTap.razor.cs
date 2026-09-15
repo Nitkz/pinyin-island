@@ -18,6 +18,7 @@ public partial class ListenAndTap : ComponentBase
 
     private bool _hasFailed = false;
     private int _lastQuestionId = -1;
+    private bool _shouldAutoPlay = false;
 
     protected override void OnParametersSet()
     {
@@ -29,6 +30,17 @@ public partial class ListenAndTap : ComponentBase
             IsSpeakerAnimating = false;
             IsDisabled = false;
             _hasFailed = false;
+            _shouldAutoPlay = true;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_shouldAutoPlay)
+        {
+            _shouldAutoPlay = false;
+            await Task.Delay(300);
+            await PlayAudio();
         }
     }
 
@@ -93,6 +105,10 @@ public partial class ListenAndTap : ComponentBase
             else if (!string.IsNullOrWhiteSpace(Question.TargetLetter))
             {
                 await JS.InvokeVoidAsync("gameAudio.playPinyinAudio", Question.TargetLetter);
+            }
+            else if (!string.IsNullOrWhiteSpace(Question.CorrectAnswer))
+            {
+                await JS.InvokeVoidAsync("gameAudio.playPinyinAudio", Question.CorrectAnswer);
             }
         }
         catch { }

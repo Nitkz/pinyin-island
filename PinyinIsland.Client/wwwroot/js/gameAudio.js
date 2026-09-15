@@ -24,12 +24,13 @@ window.gameAudio = {
                 this.currentVoiceAudio.pause();
                 this.currentVoiceAudio.currentTime = 0;
             }
-            this.currentVoiceAudio = new Audio(audioSrc);
+            var fullUrl = new URL(audioSrc, document.baseURI).href;
+            this.currentVoiceAudio = new Audio(fullUrl);
             this.currentVoiceAudio.volume = 1.0;
             var playPromise = this.currentVoiceAudio.play();
             if (playPromise !== undefined) {
                 playPromise.catch(function (err) {
-                    console.log("Audio play error for voice:", audioSrc, err);
+                    console.log("Audio play error for voice:", fullUrl, err);
                 });
             }
         } catch (e) {
