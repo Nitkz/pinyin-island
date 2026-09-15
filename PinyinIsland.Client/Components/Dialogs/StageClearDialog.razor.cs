@@ -19,6 +19,7 @@ public partial class StageClearDialog : ComponentBase
     public bool IsKeyInserted { get; private set; } = false;
     public bool IsChestOpen { get; private set; } = false;
     public bool ShowSparkles { get; private set; } = false;
+    public int RevealedStarsCount { get; private set; } = 0;
 
     public string ChestImageUrl
     {
@@ -34,8 +35,44 @@ public partial class StageClearDialog : ComponentBase
     {
         if (IsBossStage)
         {
-            // Start the boss chest unlocking sequence
+            // Start the boss chest unlocking sequence followed by stars
             await TriggerBossChestAnimation();
+        }
+        else
+        {
+            // Standard stage: play progressive star pop sounds immediately
+            await PlayStarRevealSounds();
+        }
+    }
+
+    public async Task PlayStarRevealSounds()
+    {
+        RevealedStarsCount = 0;
+        StateHasChanged();
+
+        // Brief breathing delay so dialog appears before first star pops
+        await Task.Delay(350);
+
+        for (int i = 1; i <= StarsEarned; i++)
+        {
+            RevealedStarsCount = i;
+            StateHasChanged();
+            try
+            {
+                await JS.InvokeVoidAsync("gameAudio.playStarSound", i);
+            }
+            catch { }
+            await Task.Delay(400);
+        }
+
+        if (StarsEarned >= 3)
+        {
+            await Task.Delay(150);
+            try
+            {
+                await JS.InvokeVoidAsync("gameAudio.playSfx", "cheer");
+            }
+            catch { }
         }
     }
 
@@ -46,8 +83,8 @@ public partial class StageClearDialog : ComponentBase
         ShowSparkles = false;
         StateHasChanged();
 
-        // 1. Key flies in and turns
-        await Task.Delay(400);
+        // 1. Key hovers and then glides across the screen, reaching keyhole at 2.3s
+        await Task.Delay(2300);
         IsKeyInserted = true;
         StateHasChanged();
         try
@@ -56,8 +93,8 @@ public partial class StageClearDialog : ComponentBase
         }
         catch { }
 
-        // 2. Chest pops open + Grand fanfare
-        await Task.Delay(850);
+        // 2. Key turns 90deg and chest pops open at 3.0s
+        await Task.Delay(700);
         IsChestOpen = true;
         ShowSparkles = true;
         StateHasChanged();
@@ -67,6 +104,10 @@ public partial class StageClearDialog : ComponentBase
             await JS.InvokeVoidAsync("gameAudio.playSfx", "coinShower");
         }
         catch { }
+
+        // 3. Reveal stars with progressive chimes after chest opening
+        await Task.Delay(400);
+        await PlayStarRevealSounds();
     }
 
     public async Task OnReplayClicked()

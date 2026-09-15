@@ -113,18 +113,36 @@ window.gameAudio = {
                 osc.stop(startTime + 0.6);
             });
         } else if (type === 'star') {
-            // Sparkly Star pop chime
+            // Sparkly Star pop chime with rising pitch based on extra arg
+            var starIdx = arguments[1] || 1;
+            var baseFreq = starIdx === 1 ? 880 : (starIdx === 2 ? 1174.66 : 1567.98);
+            var endFreq = starIdx === 1 ? 1318.51 : (starIdx === 2 ? 1760 : 2349.32);
+
             var osc = ctx.createOscillator();
             var gain = ctx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(987.77, now); // B5
-            osc.frequency.exponentialRampToValueAtTime(1318.51, now + 0.15); // E6
-            gain.gain.setValueAtTime(0.3, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc.frequency.setValueAtTime(baseFreq, now);
+            osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.18);
+            gain.gain.setValueAtTime(0.35, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now);
-            osc.stop(now + 0.4);
+            osc.stop(now + 0.45);
+
+            // Subtle harmonic shimmer for 3rd star
+            if (starIdx >= 3) {
+                var osc2 = ctx.createOscillator();
+                var gain2 = ctx.createGain();
+                osc2.type = 'triangle';
+                osc2.frequency.setValueAtTime(2093, now + 0.05); // C7
+                gain2.gain.setValueAtTime(0.2, now + 0.05);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.start(now + 0.05);
+                osc2.stop(now + 0.5);
+            }
         } else if (type === 'tap') {
             // Snappy bubble button tap
             var osc = ctx.createOscillator();
@@ -460,5 +478,9 @@ window.gameAudio = {
                 v.play().catch(function (err) { console.log("Error unmuting video:", err); });
             }
         }
+    },
+
+    playStarSound: function (starIndex) {
+        this.playSfx('star', starIndex);
     }
 };

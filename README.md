@@ -16,7 +16,12 @@
   * **Listen & Tap:** ฟังเสียงครูแล้วแตะป้ายพินอินให้ถูกต้อง
   * **Pinyin Train (Sequence):** ลากตัวอักษรต่อโบกี้รถไฟเรียงลำดับหมวดหมู่
   * **Treasure Match:** เปิดหีบสมบัติจับคู่เสียงและรูปตัวพินอิน
-* **Instant Feedback & Gamification:** เอฟเฟกต์พลุกระดาษและเสียงเชียร์เมื่อตอบถูก ไม่มี Game Over เพื่อส่งเสริมการเรียนรู้เชิงบวก
+* **Instant Feedback & Gamification (ระบบแรงจูงใจและการตอบสนองเชิงบวก):**
+  * **สมุดสะสมสมบัติพินอิน (Treasure Backpack):** สะสมเหรียญทองพยัญชนะ 23 ตัว และอัญมณีสระ 24 ชิ้น (รวม 47 ชิ้น) แตะฟังเสียงสำเนียงแท้ซ้ำได้ตลอดเวลา
+  * **กุญแจทองคำ & หีบสมบัติบอส 4 เกาะ (Island Boss Chest):** ด่านสุดท้ายของแต่ละเกาะ (ด่าน 3, 7, 10, 14) มีแอนิเมชันกุญแจทองคำบินไขแม่กุญแจยักษ์ สลับเป็นรูปหีบเปิดประจำเกาะ พร้อมลำแสง Sunburst Rays และฝนเหรียญทองคำกระจาย
+  * **Mascot น้องหมีแพนด้าโจรสลัด (Panda Pirate):** สหายร่วมผจญภัยคอยให้กำลังใจเด็กๆ ในทุกหน้า (กัปตันนำทางในแผนที่, ไกด์กระเป๋าสมบัติ, บอลลูนเชียร์ตามจำนวนดาวตอนผ่านด่าน และ Floating Buddy แตะขอคำเชียร์ระหว่างเล่น)
+  * **Positive Non-Punitive Learning:** เอฟเฟกต์พลุกระดาษ Confetti หลากสี, รัศมีดาวระยิบระยับ, เสียงเอฟเฟกต์สดใส (Web Audio API Zero-Latency) ตอบผิดเป็นเสียงการ์ตูนเด้งดึ๋งนุ่มนวล ไม่มี Game Over หรือระบบหักพลังชีวิต เพื่อเสริมสร้างความมั่นใจและความเพลิดเพลิน
+  * **Dynamic 4-Island Theming:** บรรยากาศและวัตถุในฉากตอบสนองตามเอกลักษณ์ 4 เกาะ (🥥 เกาะผลไม้, 💎 เกาะคริสตัล, 🪷 เกาะสระบัว, 🪙 เกาะราชวังทองคำ)
 
 ---
 
@@ -34,25 +39,29 @@ pinyin-island/
 │   ├── Models/                 # Data Models & DTOs
 │   │   ├── IslandModels.cs     # ข้อมูลเกาะ 1-4 และด่าน 1-14 (IslandInfo, StageInfo)
 │   │   ├── StageDataModels.cs  # คลังคำถาม (ListenPick, Sequence, MatchPairs)
+│   │   ├── TreasureModels.cs   # โมเดลสมบัติพินอิน 47 ตัว (PinyinTreasureItem, PinyinCategory)
 │   │   └── UserProgress.cs     # บันทึกสถานะปลดล็อกด่านและดาว (0-3)
 │   │
 │   ├── Services/               # Business Logic & Data Access
-│   │   ├── IProgressService.cs # Interface เซฟ/โหลดสถิติลง LocalStorage
-│   │   ├── ProgressService.cs  # จัดการคะแนน ดาว และการปลดล็อกด่าน
+│   │   ├── IProgressService.cs # Interface เซฟ/โหลดสถิติลง LocalStorage & คลังสมบัติ
+│   │   ├── ProgressService.cs  # จัดการคะแนน ดาว และการปลดล็อกด่าน/สมบัติ
 │   │   ├── IStageDataService.cs# Interface โหลดคลังคำถาม stages.json
-│   │   └── StageDataService.cs # โหลดและแคชข้อมูล stages.json
+│   │   └── StageDataService.cs # โหลดและแคชข้อมูล stages.json (SSOT)
 │   │
 │   ├── Components/             # Reusable UI สำหรับเด็ก ป.1
-│   │   ├── StageClearDialog.razor # หน้าต่างแจกดาวและสรุปผลเมื่อจบด่าน
+│   │   ├── Dialogs/            # หน้าต่าง Modal และ Dialogs
+│   │   │   ├── StageClearDialog.razor       # หน้าต่างแจกดาว หีบสมบัติบอส และ Mascot เชียร์
+│   │   │   ├── TreasureBackpackDialog.razor # หน้าต่างสมุดสะสมเหรียญ/อัญมณีพินอิน 47 ชิ้น
+│   │   │   └── DevTestToolbar.razor         # แถบทดสอบสำหรับ localhost (Boss Clear, Theme, SFX)
 │   │   └── GameModes/          # โหมดเกมหลัก 3 โหมด (แยกเป็น Sub-components)
 │   │       ├── ListenAndTap.razor  # โหมด 1: แตะการ์ดพาสเทลตามเสียง
 │   │       ├── TrainSequence.razor # โหมด 2: ลากต่อขบวนรถไฟพินอิน
 │   │       └── CardMatch.razor     # โหมด 3: เปิดการ์ด 3D จับคู่เสียง-รูป
 │   │
 │   ├── Pages/                  # หน้าจอหลักของเกม
-│   │   ├── Home.razor          # Title Screen (ปุ่มเริ่มเล่นใหญ่ๆ)
-│   │   ├── IslandMap.razor     # แผนที่เลือก 4 เกาะ / 14 ด่าน
-│   │   ├── GamePlay.razor      # Shell หน้าเล่นเกมหลัก (ผูก Route: /play/{StageId:int})
+│   │   ├── Home.razor          # Title Screen (ปุ่มเริ่มเล่นใหญ่ๆ + วิดีโอน้องหมี)
+│   │   ├── IslandMap.razor     # แผนที่เลือก 4 เกาะ / 14 ด่าน + Captain Panda Guide
+│   │   ├── GamePlay.razor      # Shell หน้าเล่นเกมหลัก + Floating Panda Buddy
 │   │   └── GamePlay.razor.cs   # Code-behind จัดการ Game State & Lifecycle
 │   │
 │   └── wwwroot/                # Static Assets (เข้าถึงผ่าน /assets/...)
@@ -65,9 +74,12 @@ pinyin-island/
 │       │   │   ├── initials/   # b.mp4, p.mp4, ... (23 คลิป)
 │       │   │   ├── finals/     # a.mp4, ai.mp4, vn.mp4, ... (24 คลิป)
 │       │   │   └── panda-waving.mp4
-│       │   ├── images/         # train-engine, train-carriage, card-back, block-base, ...
+│       │   ├── images/
+│       │   │   ├── chests/     # หีบสมบัติเปิด-ปิด 4 เกาะ (chest-island-1..4-open/closed)
+│       │   │   └── ...         # panda-pirate, train-engine, card-back, block-base, ...
 │       │   └── data/
-│       │       └── stages.json # คลังข้อมูลด่านและคำถาม 65 ข้อ (3 โหมด)
+│       │       ├── stages.json           # คลังข้อมูลด่านและคำถาม 65 ข้อ (SSOT)
+│       │       └── pinyin_treasures.json # คลังข้อมูลสมบัติพินอิน 47 ตัว (SSOT)
 │       └── js/
 │           └── gameAudio.js    # Web Audio API Zero-Latency SFX & Video Controller
 │
