@@ -26,25 +26,7 @@
                     <span class="learn-title">ทบทวนเสียงพินอิน (@(CurrentLearnVideoIndex + 1)/@LearnLetters.Count)</span>
                 </div>
 
-                <div class="top-actions-group">
-                    @if (CanPlayShuffleMode)
-                    {
-                        <button type="button"
-                                class="tactile-pill-btn btn-shuffle-mode"
-                                @onclick="StartShufflePlay"
-                                title="ปลดล็อกเมื่อได้ 3 ดาว! สุ่มคำถามและโหมดเกม">
-                            <span>🎲 สุ่มท้าทาย</span>
-                        </button>
-                    }
-
-                    <button type="button"
-                            class="tactile-pill-btn btn-skip"
-                            @onclick="StartQuizPhase"
-                            aria-label="เข้าสู่คำถามทันที">
-                        <span>เริ่มเล่นเกม 🎮</span>
-                        <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Class="btn-icon-skip" />
-                    </button>
-                </div>
+                <div class="top-bar-balancer" style="width: 54px;"></div>
             </header>
 
             <main class="learn-content-area">
