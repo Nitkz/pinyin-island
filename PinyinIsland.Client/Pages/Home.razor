@@ -1,169 +1,739 @@
 @page "/"
-@inject NavigationManager Navigation
+@inject NavigationManager Nav
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject IJSRuntime JS
 
-<PageTitle>Pinyin Island - เกาะมหาสมบัติพินอิน</PageTitle>
+<PageTitle>เกาะมหาสมบัติพินอิน - Pinyin Island</PageTitle>
 
-<div class="home-screen">
-    <!-- Floating Island Decoration / Header -->
-    <div class="header-banner">
-        <div class="title-badge">
-            <span class="badge-icon">🏝️</span>
-            <h1 class="game-title">เกาะมหาสมบัติพินอิน</h1>
-            <p class="game-subtitle">Pinyin Island Adventure</p>
-        </div>
-    </div>
-
-    <!-- Island Character / Illustration Area -->
-    <div class="mascot-container">
-        <div class="island-card">
-            <div class="island-illustration">
-                ⛵ 🌴 🦜 🏝️
+<div class="landing-container">
+    <!-- Top Quick Controls (Kid & Parent/Teacher Actions) -->
+    <header class="top-controls">
+        <div class="controls-left">
+            <div class="grade-badge">
+                <span class="badge-emoji">🎒</span>
+                <span class="badge-text">ป.1 เรียนสนุก</span>
             </div>
-            <p class="island-tagline">มาผจญภัยเรียนรู้พินอิน 4 แดนดิน สะสมดาวกันเถอะ!</p>
+        </div>
+
+        <div class="controls-right">
+            <!-- BGM Audio Toggle Button (Tactile 3D Round) -->
+            <button type="button"
+                    class="tactile-icon-btn btn-blue @(_isMuted ? "muted" : "")"
+                    @onclick="ToggleSound"
+                    title="@(_isMuted ? "เปิดเสียงเพลง" : "ปิดเสียงเพลง")"
+                    aria-label="สลับเสียงเพลง">
+                <MudIcon Icon="@(_isMuted ? Icons.Material.Filled.VolumeOff : Icons.Material.Filled.MusicNote)"
+                         Class="tactile-btn-icon" />
+            </button>
+
+            <!-- Reset Progress Button (Parents / Teachers gentle protection) -->
+            <button type="button"
+                    class="tactile-icon-btn btn-red"
+                    @onclick="OpenResetConfirmDialog"
+                    title="เริ่มเล่นใหม่ทั้งหมด (สำหรับครู/ผู้ปกครอง)"
+                    aria-label="เริ่มเล่นใหม่">
+                <MudIcon Icon="@Icons.Material.Filled.RestartAlt"
+                         Class="tactile-btn-icon" />
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Hero Centerpiece -->
+    <main class="hero-content">
+        <!-- Pinyin Island Bubble Logo Header -->
+        <div class="logo-wrapper">
+            <img src="assets/images/logo-pinyin-island.jpeg"
+                 alt="Pinyin Island เกาะมหาสมบัติพินอิน"
+                 class="pinyin-logo floating-anim" />
+        </div>
+
+        <!-- Animated Mascot Showcase (Panda Pirate) -->
+        <div class="mascot-stage">
+            <div class="mascot-frame bounce-anim">
+                <video id="mascotVideo"
+                       class="mascot-video"
+                       autoplay
+                       loop
+                       muted
+                       playsinline
+                       poster="assets/images/panda-pirate.jpeg">
+                    <source src="assets/videos/panda-waving.mp4" type="video/mp4" />
+                    <!-- Fallback image -->
+                    <img src="assets/images/panda-pirate.jpeg" alt="น้องแพนด้าโจรสลัด" class="mascot-fallback" />
+                </video>
+                <div class="mascot-shadow"></div>
+            </div>
+
+            <div class="island-speech-bubble">
+                <span>พร้อมไปล่าสมบัติกับน้องหมีหรือยัง? ✨</span>
+            </div>
+        </div>
+
+        <!-- Primary Action Button: Giant 3D Pulsing "เริ่มเล่นเลย!" -->
+        <div class="cta-container">
+            <button type="button"
+                    class="play-now-tactile-btn"
+                    @onclick="StartGame"
+                    aria-label="เริ่มเล่นเลย">
+                <div class="play-btn-content">
+                    <div class="play-icon-circle">
+                        <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Class="play-arrow-svg" />
+                    </div>
+                    <div class="play-btn-labels">
+                        <span class="play-btn-primary">เริ่มเล่นเลย!</span>
+                        <span class="play-btn-sub">START ADVENTURE</span>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </main>
+
+    <!-- Floating Treasure Chest in the Right Sea Area -->
+    <div class="chest-floating-sea" title="หีบสมบัติพินอิน">
+        <div class="chest-inner-anim">
+            <img src="assets/images/chest-treasure.jpeg" alt="หีบสมบัติพินอินเรืองแสง" class="chest-sea-img" />
+            <div class="chest-sparkle">✨</div>
         </div>
     </div>
 
-    <!-- Main Action Button -->
-    <div class="action-container">
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   Size="Size.Large"
-                   Class="start-game-btn"
-                   OnClick="StartAdventure">
-            <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Size="Size.Large" Class="mr-2" />
-            <span class="btn-text">เริ่มผจญภัย</span>
-        </MudButton>
-    </div>
+    <!-- Footer Wave / Soft Credit -->
+    <footer class="landing-footer">
+        <span>🏝️ ผจญภัยออกเสียงพินอิน สนุก ปลอดภัย สำหรับเด็กวัย 6-7 ขวบ</span>
+    </footer>
 </div>
 
+<!-- Parent / Teacher Reset Confirmation Dialog -->
+<MudDialog @bind-Visible="_resetDialogVisible" Options="_dialogOptions">
+    <TitleContent>
+        <div class="dialog-title-custom">
+            <span class="dialog-title-icon">🔒</span>
+            <span>ยืนยันเริ่มเล่นใหม่ (สำหรับผู้ปกครองหรือคุณครู)</span>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <div class="dialog-body-custom">
+            <p class="dialog-warning-text">
+                คุณต้องการรีเซ็ตดาว คะแนน และความก้าวหน้าการเรียนรู้พินอินทั้งหมดเพื่อเริ่มใหม่ใช่หรือไม่?
+            </p>
+            <div class="parent-math-check">
+                <p class="math-question">ตอบคำถามเพื่อยืนยัน: <strong>3 + 4 = ?</strong></p>
+                <MudTextField @bind-Value="_mathAnswer"
+                              Variant="Variant.Outlined"
+                              Placeholder="ใส่คำตอบตัวเลข"
+                              InputType="InputType.Number"
+                              Class="mt-2"
+                              Immediate="true" />
+            </div>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Text"
+                   Color="Color.Default"
+                   Size="Size.Medium"
+                   OnClick="CloseResetDialog">
+            ยกเลิก
+        </MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Error"
+                   Size="Size.Medium"
+                   StartIcon="@Icons.Material.Filled.DeleteForever"
+                   OnClick="ConfirmReset">
+            ล้างข้อมูลและเริ่มใหม่
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
 <style>
-    .home-screen {
+    /* ==========================================================================
+       Pinyin Island Landing Page Styles - Kid-Friendly 3D Aesthetic
+       ========================================================================== */
+    .landing-container {
+        position: relative;
+        min-height: 100vh;
+        width: 100%;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        align-items: center;
         justify-content: space-between;
-        min-height: 100vh;
-        padding: 2.5rem 1.5rem;
-        box-sizing: border-box;
-        text-align: center;
-        background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.7) 0%, rgba(224, 247, 250, 0.2) 80%);
+        align-items: center;
+        padding: 1rem 1.25rem;
+        background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(224, 247, 250, 0.4) 100%),
+                          url('assets/images/bg-beach.jpeg');
+        background-size: cover;
+        background-position: center bottom;
+        background-attachment: fixed;
+        overflow-x: hidden;
+        font-family: 'Fredoka', 'Prompt', sans-serif;
     }
 
-    .header-banner {
-        animation: floatDown 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Top Controls Bar */
+    .top-controls {
+        width: 100%;
+        max-width: 1200px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 10;
+        padding: 0.25rem 0.5rem;
     }
 
-    .title-badge {
-        background: rgba(255, 255, 255, 0.85);
+    .grade-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.92);
         backdrop-filter: blur(8px);
-        padding: 1.5rem 2.5rem;
-        border-radius: 28px;
-        box-shadow: 0 12px 30px rgba(0, 150, 136, 0.15);
-        border: 3px solid #FFF9C4;
+        padding: 0.5rem 1.1rem;
+        border-radius: 999px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        border: 2px solid #FFF176;
     }
 
-    .badge-icon {
-        font-size: 3.5rem;
-        display: inline-block;
-        animation: bounce 2s infinite ease-in-out;
+    .badge-emoji {
+        font-size: 1.4rem;
     }
 
-    .game-title {
-        font-size: 2.4rem;
-        font-weight: 800;
-        margin: 0.5rem 0 0.2rem 0;
+    .badge-text {
+        font-weight: 700;
+        font-size: 1.05rem;
         color: #E65100;
-        text-shadow: 2px 2px 0px #FFE082;
         letter-spacing: 0.5px;
     }
 
-    .game-subtitle {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #00897B;
-        margin: 0;
-        letter-spacing: 1px;
+    .controls-right {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
     }
 
-    .mascot-container {
-        margin: 1.5rem 0;
-        max-width: 500px;
+    /* 3D Tactile Action Buttons (Small round) */
+    .tactile-icon-btn {
+        width: 54px;
+        height: 54px;
+        border-radius: 18px;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.1s ease;
+        outline: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-blue {
+        background: linear-gradient(145deg, #42A5F5 0%, #1E88E5 100%);
+        color: #FFFFFF;
+        box-shadow: 0 6px 0 #1565C0, 0 10px 18px rgba(30, 136, 229, 0.4);
+        border: 2px solid #90CAF9;
+    }
+
+    .btn-blue.muted {
+        background: linear-gradient(145deg, #B0BEC5 0%, #78909C 100%);
+        box-shadow: 0 6px 0 #546E7A, 0 10px 18px rgba(84, 110, 122, 0.3);
+        border-color: #CFD8DC;
+    }
+
+    .btn-red {
+        background: linear-gradient(145deg, #FF6B6B 0%, #E53935 100%);
+        color: #FFFFFF;
+        box-shadow: 0 6px 0 #C62828, 0 10px 18px rgba(229, 57, 53, 0.4);
+        border: 2px solid #FFCDD2;
+    }
+
+    .tactile-icon-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .tactile-icon-btn:active {
+        transform: translateY(4px);
+        box-shadow: 0 2px 0 currentColor, 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .tactile-btn-icon {
+        font-size: 1.75rem !important;
+    }
+
+    /* Main Hero Area */
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         width: 100%;
+        max-width: 900px;
+        margin: auto;
+        padding: 0.5rem 0;
+        z-index: 5;
     }
 
-    .island-card {
-        background: rgba(255, 255, 255, 0.6);
+    /* Logo Styling */
+    .logo-wrapper {
+        margin-bottom: 0.75rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pinyin-logo {
+        max-width: 440px;
+        width: 90vw;
+        height: auto;
+        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 0.5rem 1.25rem;
+        border: 3px solid #FFF9C4;
+    }
+
+    /* Mascot Presentation */
+    .mascot-stage {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0.25rem 0 1.25rem 0;
+    }
+
+    /* Floating Chest in the Right Sea Area */
+    .chest-floating-sea {
+        position: absolute;
+        right: 5%;
+        top: 38%;
+        z-index: 15;
+        pointer-events: auto;
+        cursor: pointer;
+    }
+
+    .chest-inner-anim {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        animation: seaWaveFloat 4.5s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    .chest-inner-anim:hover {
+        animation-play-state: paused;
+        transform: scale(1.12) rotate(-4deg);
+    }
+
+    .chest-sea-img {
+        width: 150px;
+        height: auto;
         border-radius: 24px;
-        padding: 2rem 1.5rem;
-        border: 2px dashed #80DEEA;
+        box-shadow: 0 14px 28px rgba(0, 137, 123, 0.35), 0 0 25px rgba(255, 215, 0, 0.6);
+        border: 4px solid #FFE082;
+        background: rgba(255, 255, 255, 0.9);
+        display: block;
     }
 
-    .island-illustration {
-        font-size: 4rem;
-        letter-spacing: 0.8rem;
-        margin-bottom: 0.8rem;
+    .chest-sparkle {
+        position: absolute;
+        top: -14px;
+        right: -10px;
+        font-size: 1.8rem;
+        animation: sparkleAnim 1.8s infinite ease-in-out;
+        pointer-events: none;
     }
 
-    .island-tagline {
-        font-size: 1.15rem;
-        color: #455A64;
-        font-weight: 500;
-        margin: 0;
+    .mascot-frame {
+        position: relative;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 6px solid #FFFFFF;
+        box-shadow: 0 15px 35px rgba(0, 150, 136, 0.28), 0 0 0 4px #80DEEA;
+        background: radial-gradient(circle, #FFF9C4 0%, #B2EBF2 100%);
     }
 
-    .action-container {
-        margin-bottom: 1rem;
+    .mascot-video {
         width: 100%;
-        max-width: 380px;
+        height: 100%;
+        object-fit: cover;
+        display: block;
     }
 
-    .start-game-btn {
+    .mascot-fallback {
         width: 100%;
-        height: 76px !important;
-        border-radius: 40px !important;
-        background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%) !important;
-        color: white !important;
-        box-shadow: 0 10px 25px rgba(245, 124, 0, 0.4) !important;
-        border: 3px solid #FFE082 !important;
-        transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+        height: 100%;
+        object-fit: cover;
     }
 
-    .start-game-btn:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 14px 30px rgba(245, 124, 0, 0.5) !important;
+    .mascot-shadow {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 160px;
+        height: 14px;
+        background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
     }
 
-    .start-game-btn:active {
-        transform: translateY(2px) scale(0.98);
-    }
-
-    .btn-text {
-        font-size: 1.6rem;
+    .island-speech-bubble {
+        margin-top: 0.75rem;
+        background: #FFFFFF;
+        padding: 0.5rem 1.25rem;
+        border-radius: 24px;
         font-weight: 700;
-        letter-spacing: 1px;
+        font-size: 1.1rem;
+        color: #00796B;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        border: 2px solid #80CBC4;
+        animation: pulseSubtle 3s infinite ease-in-out;
     }
 
-    @@keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-8px); }
+    /* Giant 3D Play Now Button (Tactile Claymorphism) */
+    .cta-container {
+        width: 100%;
+        max-width: 400px;
+        margin-top: 0.5rem;
+        display: flex;
+        justify-content: center;
     }
 
-    @@keyframes floatDown {
-        from {
-            opacity: 0;
-            transform: translateY(-30px);
+    .play-now-tactile-btn {
+        position: relative;
+        width: 100%;
+        height: 84px;
+        border: none;
+        border-radius: 42px;
+        cursor: pointer;
+        outline: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        background: linear-gradient(180deg, #66BB6A 0%, #43A047 60%, #2E7D32 100%);
+        box-shadow: 0 10px 0 #1B5E20, 0 16px 30px rgba(27, 94, 32, 0.45);
+        border: 3px solid #A5D6A7;
+        transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.12s ease;
+        animation: heroPulse 2.5s infinite ease-in-out;
+        padding: 0 1.5rem;
+    }
+
+    .play-now-tactile-btn:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 14px 0 #1B5E20, 0 22px 35px rgba(27, 94, 32, 0.5);
+    }
+
+    .play-now-tactile-btn:active {
+        transform: translateY(7px) scale(0.98);
+        box-shadow: 0 3px 0 #1B5E20, 0 6px 12px rgba(27, 94, 32, 0.3) !important;
+        animation: none;
+    }
+
+    .play-btn-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.25rem;
+        height: 100%;
+    }
+
+    .play-icon-circle {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .play-arrow-svg {
+        font-size: 2.4rem !important;
+        color: #2E7D32 !important;
+        margin-left: 4px;
+    }
+
+    .play-btn-labels {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .play-btn-primary {
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: #FFFFFF;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        line-height: 1.15;
+        letter-spacing: 0.5px;
+    }
+
+    .play-btn-sub {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #C8E6C9;
+        letter-spacing: 1.5px;
+    }
+
+    /* Landing Footer */
+    .landing-footer {
+        z-index: 10;
+        margin-top: 1rem;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(6px);
+        padding: 0.4rem 1.2rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #37474F;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        text-align: center;
+    }
+
+    /* Dialog Styles */
+    .dialog-title-custom {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: #C62828;
+    }
+
+    .dialog-title-icon {
+        font-size: 1.5rem;
+    }
+
+    .dialog-body-custom {
+        font-size: 1rem;
+        color: #455A64;
+    }
+
+    .dialog-warning-text {
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+
+    .parent-math-check {
+        background: #FFF3E0;
+        border-radius: 12px;
+        padding: 1rem;
+        border: 1px dashed #FFA726;
+    }
+
+    .math-question {
+        margin: 0;
+        color: #E65100;
+        font-size: 1.05rem;
+    }
+
+    /* ==========================================================================
+       Animations
+       ========================================================================== */
+    @@keyframes float {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
         }
-        to {
+        50% {
+            transform: translateY(-8px) rotate(-1deg);
+        }
+    }
+
+    @@keyframes bounceMascot {
+        0%, 100% {
+            transform: translateY(0) scale(1);
+        }
+        50% {
+            transform: translateY(-10px) scale(1.02);
+        }
+    }
+
+    @@keyframes heroPulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.03);
+            box-shadow: 0 12px 0 #1B5E20, 0 20px 35px rgba(46, 125, 50, 0.6);
+        }
+    }
+
+    @@keyframes pulseSubtle {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.04);
+        }
+    }
+
+    @@keyframes seaWaveFloat {
+        0% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        20% {
+            transform: translate3d(8px, -18px, 0) rotate(4deg);
+        }
+        40% {
+            transform: translate3d(16px, -6px, 0) rotate(1deg);
+        }
+        60% {
+            transform: translate3d(8px, -24px, 0) rotate(-4deg);
+        }
+        80% {
+            transform: translate3d(-4px, -10px, 0) rotate(-2deg);
+        }
+        100% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+    }
+
+    @@keyframes sparkleAnim {
+        0%, 100% {
+            transform: scale(0.8) rotate(0deg);
+            opacity: 0.7;
+        }
+        50% {
+            transform: scale(1.3) rotate(20deg);
             opacity: 1;
-            transform: translateY(0);
+        }
+    }
+
+    .floating-anim {
+        animation: float 4s ease-in-out infinite;
+    }
+
+    .bounce-anim {
+        animation: bounceMascot 3.2s ease-in-out infinite;
+    }
+
+    .sea-float-anim {
+        animation: seaWaveFloat 5.5s ease-in-out infinite;
+    }
+
+    /* Media query adjustments for tablets & small screens */
+    @@media (max-width: 900px) {
+        .chest-floating-sea {
+            right: 2%;
+            top: auto;
+            bottom: 80px;
+        }
+        .chest-sea-img {
+            width: 100px;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .chest-floating-sea {
+            right: 12px;
+            bottom: 75px;
+        }
+        .chest-sea-img {
+            width: 80px;
+            border-radius: 16px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .mascot-frame {
+            width: 210px;
+            height: 210px;
+        }
+
+        .play-now-tactile-btn {
+            height: 76px;
+        }
+
+        .play-btn-primary {
+            font-size: 1.55rem;
+        }
+
+        .pinyin-logo {
+            max-width: 320px;
+        }
+
+        .landing-footer {
+            font-size: 0.8rem;
         }
     }
 </style>
 
 @code {
-    private void StartAdventure()
+    private bool _isMuted = false;
+    private bool _resetDialogVisible = false;
+    private string _mathAnswer = string.Empty;
+
+    private readonly DialogOptions _dialogOptions = new()
     {
-        // นำทางไปยังหน้าเลือกด่าน (IslandMap) ในอนาคต
-        Navigation.NavigateTo("/map");
+        MaxWidth = MaxWidth.Small,
+        FullWidth = true,
+        CloseButton = true,
+        BackdropClick = false
+    };
+
+    private void StartGame()
+    {
+        Nav.NavigateTo("/map");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                // Ensure video autoplays smoothly across all browsers
+                await JS.InvokeVoidAsync("gameAudio.playVideo", "mascotVideo");
+                await JS.InvokeVoidAsync("gameAudio.setVideoMuted", "mascotVideo", _isMuted);
+            }
+            catch
+            {
+                // Silently ignore if JS runtime not ready
+            }
+        }
+    }
+
+    private async Task ToggleSound()
+    {
+        _isMuted = !_isMuted;
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.setVideoMuted", "mascotVideo", _isMuted);
+        }
+        catch
+        {
+            // Ignored if runtime not available
+        }
+
+        var message = _isMuted ? "ปิดเสียงเรียบร้อย 🔇" : "เปิดเสียงแล้ว! 🎵";
+        Snackbar.Add(message, Severity.Info, config =>
+        {
+            config.VisibleStateDuration = 1800;
+            config.ShowCloseIcon = false;
+        });
+    }
+
+    private void OpenResetConfirmDialog()
+    {
+        _mathAnswer = string.Empty;
+        _resetDialogVisible = true;
+    }
+
+    private void CloseResetDialog()
+    {
+        _resetDialogVisible = false;
+        _mathAnswer = string.Empty;
+    }
+
+    private void ConfirmReset()
+    {
+        // Simple security gate for parents / teachers (3 + 4 = 7)
+        if (_mathAnswer.Trim() == "7")
+        {
+            _resetDialogVisible = false;
+            Snackbar.Add("รีเซ็ตความก้าวหน้าสำเร็จ เริ่มต้นการผจญภัยใหม่! ✨", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("คำตอบไม่ถูกต้อง กรุณาตรวจสอบคำตอบ (3 + 4 = 7)", Severity.Warning);
+        }
     }
 }
