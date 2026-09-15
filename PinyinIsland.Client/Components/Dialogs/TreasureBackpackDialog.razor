@@ -1,0 +1,601 @@
+@using MudBlazor
+@using PinyinIsland.Client.Models
+@using PinyinIsland.Client.Services
+@inject IProgressService ProgressService
+@inject IJSRuntime JS
+
+<div class="backpack-backdrop" @onclick="OnClose">
+    <div class="backpack-modal-card bounce-backpack" @onclick:stopPropagation>
+        <!-- Modal Top Ribbon & Header -->
+        <div class="backpack-header">
+            <div class="header-title-box">
+                <div class="backpack-3d-badge">🎒</div>
+                <div class="header-text-group">
+                    <h2 class="backpack-title">กระเป๋าสมบัติพินอิน</h2>
+                    <p class="backpack-subtitle">สมุดสะสมเหรียญทองและอัญมณีพินอิน 47 ชิ้น</p>
+                </div>
+            </div>
+
+            <button type="button"
+                    class="btn-close-backpack"
+                    @onclick="OnClose"
+                    aria-label="ปิดกระเป๋าสมบัติ"
+                    title="ปิด">
+                <MudIcon Icon="@Icons.Material.Filled.Close" Class="close-icon" />
+            </button>
+        </div>
+
+        <!-- Progress Stat Bar -->
+        <div class="backpack-stat-panel">
+            <div class="stat-info-row">
+                <div class="stat-badge">
+                    <span class="stat-sparkle">✨</span>
+                    <span class="stat-text">สะสมแล้ว <strong>@UnlockedCount</strong> / @TotalCount ชิ้น</span>
+                </div>
+                <div class="stat-percentage">
+                    <span>@Percentage% สำเร็จ</span>
+                </div>
+            </div>
+
+            <div class="backpack-progress-track">
+                <div class="backpack-progress-fill" style="width: @(Percentage)%;"></div>
+            </div>
+        </div>
+
+        <!-- Category Filter Tabs -->
+        <div class="category-tabs-row">
+            <button type="button"
+                    class="tab-pill @(_currentTab == "all" ? "tab-active" : "")"
+                    @onclick='() => SetTab("all")'>
+                <span>🌟 ทั้งหมด (@TotalCount)</span>
+            </button>
+            <button type="button"
+                    class="tab-pill @(_currentTab == "initials" ? "tab-active" : "")"
+                    @onclick='() => SetTab("initials")'>
+                <span>🪙 พยัญชนะ (23)</span>
+            </button>
+            <button type="button"
+                    class="tab-pill @(_currentTab == "single" ? "tab-active" : "")"
+                    @onclick='() => SetTab("single")'>
+                <span>💎 สระเดี่ยว (6)</span>
+            </button>
+            <button type="button"
+                    class="tab-pill @(_currentTab == "compound" ? "tab-active" : "")"
+                    @onclick='() => SetTab("compound")'>
+                <span>✨ สระผสม/นาสิก (18)</span>
+            </button>
+        </div>
+
+        <!-- Scrollable Coin / Gem Collection Grid -->
+        <div class="coins-grid-scroll">
+            <div class="coins-grid">
+                @foreach (var item in FilteredItems)
+                {
+                    var isUnlocked = UnlockedLetters.Contains(item.Letter) || UnlockedLetters.Contains(item.DisplayLetter);
+                    var isCurrentPlaying = _playingLetter == item.Letter;
+
+                    <div class="coin-cell">
+                        <button type="button"
+                                class="tactile-coin-btn @(isUnlocked ? "coin-unlocked" : "coin-locked") @(isCurrentPlaying ? "coin-playing" : "")"
+                                @onclick="() => PlayLetterSound(item, isUnlocked)"
+                                aria-label="พินอิน @item.DisplayLetter @(isUnlocked ? $"เสียง {item.ThaiSound}" : "ล็อกอยู่")">
+                            
+                            @if (isUnlocked)
+                            {
+                                <!-- Shine highlight animation on unlocked coins -->
+                                <div class="coin-shine-sweep"></div>
+
+                                <div class="coin-category-badge">
+                                    <span>@item.BadgeEmoji</span>
+                                </div>
+
+                                <div class="coin-letter-wrap">
+                                    <span class="coin-letter-text">@item.DisplayLetter</span>
+                                </div>
+
+                                <div class="coin-sound-tag">
+                                    <span>@item.ThaiSound</span>
+                                </div>
+
+                                <div class="coin-tap-hint">
+                                    <MudIcon Icon="@Icons.Material.Filled.VolumeUp" Class="speaker-micro-icon" />
+                                    <span>แตะฟัง</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="coin-lock-wrapper">
+                                    <div class="lock-icon-circle">
+                                        <MudIcon Icon="@Icons.Material.Filled.Lock" Class="micro-lock-icon" />
+                                    </div>
+                                    <span class="coin-locked-letter">@item.DisplayLetter</span>
+                                    <span class="lock-stage-hint">ด่าน @item.StageOrigin</span>
+                                </div>
+                            }
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Bottom Footer with Audio Hint -->
+        <div class="backpack-footer">
+            <span class="footer-tip-icon">💡</span>
+            <span class="footer-tip-text">แตะที่เหรียญทองเพื่อฟังเสียงอ่านพินอินซ้ำได้ตลอดเวลา! ยิ่งผ่านด่านเยอะ ยิ่งปลดล็อกครบเร็วขึ้นนะ</span>
+        </div>
+    </div>
+</div>
+
+<style>
+    .backpack-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: rgba(4, 20, 38, 0.75);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        user-select: none;
+        -webkit-user-select: none;
+        animation: fadeIn 0.2s ease-out;
+    }
+
+    .backpack-modal-card {
+        background: linear-gradient(180deg, #FFFFFF 0%, #FFFDE7 100%);
+        border: 6px solid #FFD54F;
+        border-radius: 36px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), 
+                    inset 0 4px 0 rgba(255, 255, 255, 0.9),
+                    inset 0 -6px 0 #FFE082;
+        width: 100%;
+        max-width: 900px;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .bounce-backpack {
+        animation: backpackBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @@keyframes backpackBounce {
+        0% { transform: scale(0.6) translateY(50px); opacity: 0; }
+        100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    /* Header */
+    .backpack-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        background: linear-gradient(135deg, #FFF8E1 0%, #FFE082 100%);
+        border-bottom: 3px solid #FFCA28;
+    }
+
+    .header-title-box {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .backpack-3d-badge {
+        font-size: 2.5rem;
+        background: #FFFFFF;
+        width: 56px;
+        height: 56px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 6px 14px rgba(255, 160, 0, 0.35);
+        border: 2px solid #FFE082;
+    }
+
+    .backpack-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #E65100;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .backpack-subtitle {
+        font-size: 0.95rem;
+        color: #8D6E63;
+        margin: 2px 0 0;
+        font-weight: 600;
+    }
+
+    .btn-close-backpack {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: none;
+        background: #FFFFFF;
+        color: #795548;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 0 #D7CCC8, 0 6px 12px rgba(0,0,0,0.1);
+        transition: transform 0.15s ease, background-color 0.15s;
+    }
+
+    .btn-close-backpack:hover {
+        background: #FFEBEE;
+        color: #C62828;
+    }
+
+    .btn-close-backpack:active {
+        transform: translateY(3px);
+        box-shadow: 0 1px 0 #D7CCC8;
+    }
+
+    .close-icon {
+        font-size: 1.5rem !important;
+    }
+
+    /* Progress Stat Panel */
+    .backpack-stat-panel {
+        padding: 12px 24px;
+        background: #FFFFFF;
+        border-bottom: 2px dashed #FFE082;
+    }
+
+    .stat-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+
+    .stat-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 1.05rem;
+        color: #E65100;
+        font-weight: 700;
+    }
+
+    .stat-percentage {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #F57F17;
+        background: #FFF9C4;
+        padding: 2px 10px;
+        border-radius: 999px;
+        border: 1px solid #FFE082;
+    }
+
+    .backpack-progress-track {
+        height: 14px;
+        background: #ECEFF1;
+        border-radius: 999px;
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .backpack-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #FFB300 0%, #FF6F00 50%, #43A047 100%);
+        border-radius: 999px;
+        transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 0 10px rgba(255, 179, 0, 0.6);
+    }
+
+    /* Category Tabs */
+    .category-tabs-row {
+        display: flex;
+        gap: 8px;
+        padding: 10px 24px;
+        background: #FFFDE7;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .category-tabs-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-pill {
+        white-space: nowrap;
+        padding: 6px 14px;
+        border-radius: 999px;
+        border: 2px solid #FFE082;
+        background: #FFFFFF;
+        color: #795548;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        outline: none;
+    }
+
+    .tab-pill:hover {
+        background: #FFF8E1;
+        border-color: #FFB300;
+    }
+
+    .tab-pill.tab-active {
+        background: linear-gradient(180deg, #FFA000 0%, #E65100 100%);
+        color: #FFFFFF;
+        border-color: #BF360C;
+        box-shadow: 0 4px 8px rgba(230, 81, 0, 0.3);
+        transform: scale(1.04);
+    }
+
+    /* Coins Grid */
+    .coins-grid-scroll {
+        padding: 18px 24px;
+        overflow-y: auto;
+        flex: 1;
+        max-height: calc(90vh - 270px);
+    }
+
+    .coins-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 14px;
+    }
+
+    .coin-cell {
+        display: flex;
+    }
+
+    .tactile-coin-btn {
+        width: 100%;
+        min-height: 125px;
+        border-radius: 24px;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 6px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+        outline: none;
+    }
+
+    /* Unlocked Gold Coin */
+    .coin-unlocked {
+        background: linear-gradient(145deg, #FFF9C4 0%, #FFD54F 40%, #FFB300 100%);
+        border: 3px solid #FFA000;
+        box-shadow: 0 6px 0 #D87D00, 0 8px 16px rgba(255, 160, 0, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .coin-unlocked:hover {
+        transform: translateY(-4px) scale(1.04);
+        box-shadow: 0 10px 0 #D87D00, 0 12px 20px rgba(255, 160, 0, 0.45);
+    }
+
+    .coin-unlocked:active, .coin-playing {
+        transform: translateY(3px) scale(0.96);
+        box-shadow: 0 2px 0 #D87D00, 0 4px 8px rgba(255, 160, 0, 0.2);
+    }
+
+    .coin-shine-sweep {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(60deg, transparent 40%, rgba(255, 255, 255, 0.4) 50%, transparent 60%);
+        pointer-events: none;
+        animation: shineSweep 4s infinite linear;
+    }
+
+    @@keyframes shineSweep {
+        0% { transform: translate(-100%, -100%); }
+        30%, 100% { transform: translate(100%, 100%); }
+    }
+
+    .coin-category-badge {
+        font-size: 0.95rem;
+    }
+
+    .coin-letter-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+    }
+
+    .coin-letter-text {
+        font-size: 2.1rem;
+        font-weight: 900;
+        color: #BF360C;
+        text-shadow: 0 2px 0 rgba(255, 255, 255, 0.7);
+        line-height: 1;
+        font-family: 'Fredoka', 'Prompt', sans-serif;
+    }
+
+    .coin-sound-tag {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #E65100;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 2px 8px;
+        border-radius: 999px;
+        max-width: 95%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .coin-tap-hint {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        font-size: 0.7rem;
+        color: #D84315;
+        font-weight: 700;
+    }
+
+    .speaker-micro-icon {
+        font-size: 0.9rem !important;
+    }
+
+    /* Locked Stone Coin */
+    .coin-locked {
+        background: linear-gradient(145deg, #CFD8DC 0%, #B0BEC5 100%);
+        border: 3px solid #90A4AE;
+        box-shadow: 0 5px 0 #78909C, 0 6px 12px rgba(0,0,0,0.15);
+        cursor: not-allowed;
+        opacity: 0.75;
+    }
+
+    .coin-lock-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        height: 100%;
+        color: #455A64;
+    }
+
+    .lock-icon-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #ECEFF1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    .micro-lock-icon {
+        font-size: 1.1rem !important;
+        color: #546E7A;
+    }
+
+    .coin-locked-letter {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #607D8B;
+    }
+
+    .lock-stage-hint {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #78909C;
+    }
+
+    /* Footer */
+    .backpack-footer {
+        padding: 12px 24px;
+        background: #FFF8E1;
+        border-top: 2px solid #FFE082;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #795548;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    .footer-tip-icon {
+        font-size: 1.2rem;
+    }
+
+    @@media (max-width: 600px) {
+        .coins-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .backpack-title {
+            font-size: 1.3rem;
+        }
+        .backpack-3d-badge {
+            width: 44px;
+            height: 44px;
+            font-size: 1.8rem;
+        }
+        .coins-grid-scroll {
+            padding: 12px;
+        }
+    }
+</style>
+
+@code {
+    [Parameter] public EventCallback OnCloseCallback { get; set; }
+
+    private UserProgress _progress = new();
+    private List<PinyinTreasureItem> _allItems = new();
+    private HashSet<string> UnlockedLetters = new();
+    private string _currentTab = "all";
+    private string? _playingLetter;
+
+    private int TotalCount => _allItems.Count;
+    private int UnlockedCount => _allItems.Count(i => UnlockedLetters.Contains(i.Letter) || UnlockedLetters.Contains(i.DisplayLetter));
+    private int Percentage => TotalCount > 0 ? (int)Math.Round((double)UnlockedCount / TotalCount * 100) : 0;
+
+    private IEnumerable<PinyinTreasureItem> FilteredItems => _currentTab switch
+    {
+        "initials" => _allItems.Where(i => i.Category == PinyinCategory.Initial),
+        "single" => _allItems.Where(i => i.Category == PinyinCategory.SingleFinal),
+        "compound" => _allItems.Where(i => i.Category == PinyinCategory.CompoundFinal),
+        _ => _allItems
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allItems = await ProgressService.GetAllTreasureItemsAsync();
+        _progress = await ProgressService.GetProgressAsync();
+        UnlockedLetters = await ProgressService.GetUnlockedTreasureLettersAsync(_progress);
+    }
+
+    private void SetTab(string tab)
+    {
+        _currentTab = tab;
+    }
+
+    private async Task PlayLetterSound(PinyinTreasureItem item, bool isUnlocked)
+    {
+        if (!isUnlocked)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("gameAudio.playSfx", "wrong");
+            }
+            catch { }
+            return;
+        }
+
+        _playingLetter = item.Letter;
+        StateHasChanged();
+
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.playSfx", "tap");
+            await JS.InvokeVoidAsync("gameAudio.playPinyinAudio", item.Letter);
+        }
+        catch { }
+
+        await Task.Delay(600);
+        if (_playingLetter == item.Letter)
+        {
+            _playingLetter = null;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnClose()
+    {
+        if (OnCloseCallback.HasDelegate)
+        {
+            await OnCloseCallback.InvokeAsync();
+        }
+    }
+}

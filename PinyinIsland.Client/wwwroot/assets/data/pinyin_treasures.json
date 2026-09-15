@@ -1,0 +1,425 @@
+[
+  {
+    "letter": "b",
+    "display_letter": "b",
+    "category": "initial",
+    "stage_origin": 1,
+    "island_origin": 1,
+    "thai_sound": "ปัว",
+    "description": "เสียงริมฝีปาก พ่นลมน้อย"
+  },
+  {
+    "letter": "p",
+    "display_letter": "p",
+    "category": "initial",
+    "stage_origin": 1,
+    "island_origin": 1,
+    "thai_sound": "พัว",
+    "description": "เสียงริมฝีปาก พ่นลมแรง"
+  },
+  {
+    "letter": "m",
+    "display_letter": "m",
+    "category": "initial",
+    "stage_origin": 1,
+    "island_origin": 1,
+    "thai_sound": "มัว",
+    "description": "เสียงริมฝีปาก นาสิกขึ้นจมูก"
+  },
+  {
+    "letter": "f",
+    "display_letter": "f",
+    "category": "initial",
+    "stage_origin": 1,
+    "island_origin": 1,
+    "thai_sound": "ฟัว",
+    "description": "เสียงฟันบนแตะริมฝีปากล่าง"
+  },
+  {
+    "letter": "d",
+    "display_letter": "d",
+    "category": "initial",
+    "stage_origin": 2,
+    "island_origin": 1,
+    "thai_sound": "เตอ",
+    "description": "เสียงปลายลิ้นแตะปุ่มเหงือกบน ไม่พ่นลม"
+  },
+  {
+    "letter": "t",
+    "display_letter": "t",
+    "category": "initial",
+    "stage_origin": 2,
+    "island_origin": 1,
+    "thai_sound": "เทอ",
+    "description": "เสียงปลายลิ้นแตะปุ่มเหงือกบน พ่นลมแรง"
+  },
+  {
+    "letter": "n",
+    "display_letter": "n",
+    "category": "initial",
+    "stage_origin": 2,
+    "island_origin": 1,
+    "thai_sound": "เนอ",
+    "description": "เสียงปลายลิ้นแตะปุ่มเหงือก นาสิกขึ้นจมูก"
+  },
+  {
+    "letter": "l",
+    "display_letter": "l",
+    "category": "initial",
+    "stage_origin": 2,
+    "island_origin": 1,
+    "thai_sound": "เลอ",
+    "description": "เสียงข้างลิ้น ลมออกสองข้างลิ้น"
+  },
+  {
+    "letter": "g",
+    "display_letter": "g",
+    "category": "initial",
+    "stage_origin": 3,
+    "island_origin": 1,
+    "thai_sound": "เกอ",
+    "description": "เสียงโคนลิ้นแตะเพดานอ่อน ไม่พ่นลม"
+  },
+  {
+    "letter": "k",
+    "display_letter": "k",
+    "category": "initial",
+    "stage_origin": 3,
+    "island_origin": 1,
+    "thai_sound": "เคอ",
+    "description": "เสียงโคนลิ้นแตะเพดานอ่อน พ่นลมแรง"
+  },
+  {
+    "letter": "h",
+    "display_letter": "h",
+    "category": "initial",
+    "stage_origin": 3,
+    "island_origin": 1,
+    "thai_sound": "เฮอ",
+    "description": "เสียงเสียดแทรกโคนลิ้น"
+  },
+  {
+    "letter": "j",
+    "display_letter": "j",
+    "category": "initial",
+    "stage_origin": 4,
+    "island_origin": 2,
+    "thai_sound": "จี",
+    "description": "เสียงหน้าลิ้นแตะเพดานแข็ง ไม่พ่นลม"
+  },
+  {
+    "letter": "q",
+    "display_letter": "q",
+    "category": "initial",
+    "stage_origin": 4,
+    "island_origin": 2,
+    "thai_sound": "ชี",
+    "description": "เสียงหน้าลิ้นแตะเพดานแข็ง พ่นลมแรง"
+  },
+  {
+    "letter": "x",
+    "display_letter": "x",
+    "category": "initial",
+    "stage_origin": 4,
+    "island_origin": 2,
+    "thai_sound": "ซี",
+    "description": "เสียงเสียดแทรกหน้าลิ้น ยิ้มกว้างๆ"
+  },
+  {
+    "letter": "zh",
+    "display_letter": "zh",
+    "category": "initial",
+    "stage_origin": 5,
+    "island_origin": 2,
+    "thai_sound": "จรือ",
+    "description": "เสียงม้วนปลายลิ้นขึ้นแตะเพดานแข็ง ไม่พ่นลม"
+  },
+  {
+    "letter": "ch",
+    "display_letter": "ch",
+    "category": "initial",
+    "stage_origin": 5,
+    "island_origin": 2,
+    "thai_sound": "ชรือ",
+    "description": "เสียงม้วนปลายลิ้นขึ้นแตะเพดานแข็ง พ่นลมแรง"
+  },
+  {
+    "letter": "sh",
+    "display_letter": "sh",
+    "category": "initial",
+    "stage_origin": 5,
+    "island_origin": 2,
+    "thai_sound": "ซรือ",
+    "description": "เสียงเสียดแทรกม้วนปลายลิ้น"
+  },
+  {
+    "letter": "r",
+    "display_letter": "r",
+    "category": "initial",
+    "stage_origin": 5,
+    "island_origin": 2,
+    "thai_sound": "ยรือ",
+    "description": "เสียงม้วนลิ้น กล่องเสียงสั่นสะเทือน"
+  },
+  {
+    "letter": "z",
+    "display_letter": "z",
+    "category": "initial",
+    "stage_origin": 6,
+    "island_origin": 2,
+    "thai_sound": "จือ",
+    "description": "เสียงปลายลิ้นแตะหลังฟันหน้าล่าง ไม่พ่นลม"
+  },
+  {
+    "letter": "c",
+    "display_letter": "c",
+    "category": "initial",
+    "stage_origin": 6,
+    "island_origin": 2,
+    "thai_sound": "ชือ",
+    "description": "เสียงปลายลิ้นแตะหลังฟันหน้าล่าง พ่นลมแรง"
+  },
+  {
+    "letter": "s",
+    "display_letter": "s",
+    "category": "initial",
+    "stage_origin": 6,
+    "island_origin": 2,
+    "thai_sound": "ซือ",
+    "description": "เสียงเสียดแทรกฟันหน้า ยิงฟันยิ้ม"
+  },
+  {
+    "letter": "y",
+    "display_letter": "y",
+    "category": "initial",
+    "stage_origin": 7,
+    "island_origin": 2,
+    "thai_sound": "อี / ยี",
+    "description": "พยัญชนะกึ่งสระต้น"
+  },
+  {
+    "letter": "w",
+    "display_letter": "w",
+    "category": "initial",
+    "stage_origin": 7,
+    "island_origin": 2,
+    "thai_sound": "อู / วู",
+    "description": "พยัญชนะกึ่งสระต้น ห่อปากกลม"
+  },
+  {
+    "letter": "a",
+    "display_letter": "a",
+    "category": "single_final",
+    "stage_origin": 8,
+    "island_origin": 3,
+    "thai_sound": "อา",
+    "description": "สระเดี่ยว อ้าปากกว้างที่สุด"
+  },
+  {
+    "letter": "o",
+    "display_letter": "o",
+    "category": "single_final",
+    "stage_origin": 8,
+    "island_origin": 3,
+    "thai_sound": "โอ",
+    "description": "สระเดี่ยว ห่อปากกลมปานกลาง"
+  },
+  {
+    "letter": "e",
+    "display_letter": "e",
+    "category": "single_final",
+    "stage_origin": 8,
+    "island_origin": 3,
+    "thai_sound": "เออ",
+    "description": "สระเดี่ยว เหยียดมุมปากออกสองข้าง"
+  },
+  {
+    "letter": "i",
+    "display_letter": "i",
+    "category": "single_final",
+    "stage_origin": 9,
+    "island_origin": 3,
+    "thai_sound": "อี",
+    "description": "สระเดี่ยว ยิ้มเห็นฟันบนล่าง"
+  },
+  {
+    "letter": "u",
+    "display_letter": "u",
+    "category": "single_final",
+    "stage_origin": 9,
+    "island_origin": 3,
+    "thai_sound": "อู",
+    "description": "สระเดี่ยว ห่อปากกลมจู๋รูเล็ก"
+  },
+  {
+    "letter": "v",
+    "display_letter": "ü",
+    "category": "single_final",
+    "stage_origin": 9,
+    "island_origin": 3,
+    "thai_sound": "อวี",
+    "description": "สระเดี่ยว ทำปากจู๋เหมือน อู แต่ออกเสียง อี"
+  },
+  {
+    "letter": "ai",
+    "display_letter": "ai",
+    "category": "compound_final",
+    "stage_origin": 11,
+    "island_origin": 4,
+    "thai_sound": "ไอ",
+    "description": "สระผสม a + i (อา เลื่อนไป อี)"
+  },
+  {
+    "letter": "ei",
+    "display_letter": "ei",
+    "category": "compound_final",
+    "stage_origin": 11,
+    "island_origin": 4,
+    "thai_sound": "เอย",
+    "description": "สระผสม e + i (เออ เลื่อนไป อี)"
+  },
+  {
+    "letter": "ui",
+    "display_letter": "ui",
+    "category": "compound_final",
+    "stage_origin": 11,
+    "island_origin": 4,
+    "thai_sound": "เวย",
+    "description": "สระผสม u + ei (อู เลื่อนไป เอย)"
+  },
+  {
+    "letter": "ao",
+    "display_letter": "ao",
+    "category": "compound_final",
+    "stage_origin": 11,
+    "island_origin": 4,
+    "thai_sound": "เอา",
+    "description": "สระผสม a + o (อา เลื่อนไป โอ)"
+  },
+  {
+    "letter": "ou",
+    "display_letter": "ou",
+    "category": "compound_final",
+    "stage_origin": 12,
+    "island_origin": 4,
+    "thai_sound": "โอว",
+    "description": "สระผสม o + u (โอ เลื่อนไป อู)"
+  },
+  {
+    "letter": "iu",
+    "display_letter": "iu",
+    "category": "compound_final",
+    "stage_origin": 12,
+    "island_origin": 4,
+    "thai_sound": "อิว",
+    "description": "สระผสม i + ou (อี เลื่อนไป โอว)"
+  },
+  {
+    "letter": "ie",
+    "display_letter": "ie",
+    "category": "compound_final",
+    "stage_origin": 12,
+    "island_origin": 4,
+    "thai_sound": "เอีย",
+    "description": "สระผสม i + e (อี เลื่อนไป เออ)"
+  },
+  {
+    "letter": "ue",
+    "display_letter": "üe",
+    "category": "compound_final",
+    "stage_origin": 12,
+    "island_origin": 4,
+    "thai_sound": "เยวี่ย",
+    "description": "สระผสม ü + e (อวี เลื่อนไป เออ)"
+  },
+  {
+    "letter": "er",
+    "display_letter": "er",
+    "category": "compound_final",
+    "stage_origin": 12,
+    "island_origin": 4,
+    "thai_sound": "เออร์",
+    "description": "สระม้วนลิ้นพิเศษ e + r"
+  },
+  {
+    "letter": "an",
+    "display_letter": "an",
+    "category": "compound_final",
+    "stage_origin": 13,
+    "island_origin": 4,
+    "thai_sound": "อัน",
+    "description": "สระนาสิกหน้า a + n"
+  },
+  {
+    "letter": "en",
+    "display_letter": "en",
+    "category": "compound_final",
+    "stage_origin": 13,
+    "island_origin": 4,
+    "thai_sound": "เอิน",
+    "description": "สระนาสิกหน้า e + n"
+  },
+  {
+    "letter": "in",
+    "display_letter": "in",
+    "category": "compound_final",
+    "stage_origin": 13,
+    "island_origin": 4,
+    "thai_sound": "อิน",
+    "description": "สระนาสิกหน้า i + n"
+  },
+  {
+    "letter": "un",
+    "display_letter": "un",
+    "category": "compound_final",
+    "stage_origin": 13,
+    "island_origin": 4,
+    "thai_sound": "อุน",
+    "description": "สระนาสิกหน้า u + n"
+  },
+  {
+    "letter": "vn",
+    "display_letter": "ün",
+    "category": "compound_final",
+    "stage_origin": 13,
+    "island_origin": 4,
+    "thai_sound": "ยวิน",
+    "description": "สระนาสิกหน้า ü + n"
+  },
+  {
+    "letter": "ang",
+    "display_letter": "ang",
+    "category": "compound_final",
+    "stage_origin": 14,
+    "island_origin": 4,
+    "thai_sound": "อัง",
+    "description": "สระนาสิกหลัง a + ng"
+  },
+  {
+    "letter": "eng",
+    "display_letter": "eng",
+    "category": "compound_final",
+    "stage_origin": 14,
+    "island_origin": 4,
+    "thai_sound": "เอิง",
+    "description": "สระนาสิกหลัง e + ng"
+  },
+  {
+    "letter": "ing",
+    "display_letter": "ing",
+    "category": "compound_final",
+    "stage_origin": 14,
+    "island_origin": 4,
+    "thai_sound": "อิง",
+    "description": "สระนาสิกหลัง i + ng"
+  },
+  {
+    "letter": "ong",
+    "display_letter": "ong",
+    "category": "compound_final",
+    "stage_origin": 14,
+    "island_origin": 4,
+    "thai_sound": "อุง",
+    "description": "สระนาสิกหลัง o + ng"
+  }
+]

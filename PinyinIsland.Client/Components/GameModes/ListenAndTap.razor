@@ -25,8 +25,8 @@
         </div>
     </div>
 
-    <!-- Options Grid: Large Pastel Pinyin Cards -->
-    <div class="options-container">
+    <!-- Options Grid: Large Pastel Pinyin Cards with Island Theme Ornaments -->
+    <div class="options-container @GetThemeClass()">
         @if (Question != null)
         {
             @for (int i = 0; i < Question.Options.Count; i++)
@@ -34,14 +34,20 @@
                 var option = Question.Options[i];
                 var cardStateClass = GetOptionCardStateClass(option);
                 var colorTheme = GetPastelCardColor(i);
+                var ornament = GetThemeOrnament(i);
 
                 <button type="button"
-                        class="tactile-pinyin-card @cardStateClass"
+                        class="tactile-pinyin-card @cardStateClass @GetThemeClass()-card"
                         style="--card-bg: @colorTheme.Bg; --card-border: @colorTheme.Border; --card-shadow: @colorTheme.Shadow; --card-text: @colorTheme.Text;"
                         disabled="@IsDisabled"
                         @onclick="() => SelectOption(option)"
                         aria-label="ตัวอักษร @option">
                     
+                    <!-- Thematic Ornament Corner Pin -->
+                    <div class="card-ornament-badge">
+                        <span>@ornament</span>
+                    </div>
+
                     <div class="card-inner-block">
                         <span class="pinyin-text">@option</span>
                     </div>
@@ -188,6 +194,62 @@
         background: linear-gradient(180deg, #FEE2E2 0%, #FECACA 100%) !important;
         border-color: #F87171 !important;
         box-shadow: 0 10px 0 #DC2626, 0 0 20px rgba(239, 68, 68, 0.4) !important;
+    }
+
+    .card-ornament-badge {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        font-size: 1.4rem;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+        transition: transform 0.2s ease;
+    }
+
+    .tactile-pinyin-card:hover .card-ornament-badge {
+        transform: scale(1.25) rotate(12deg);
+    }
+
+    /* Island 1: Fruit & Beach Coconut/Shell Theme */
+    .theme-island-1-fruit-card {
+        border-radius: 32px;
+    }
+    .theme-island-1-fruit-card:hover {
+        border-color: #81C784 !important;
+    }
+
+    /* Island 2: Fantasy Rock Crystal & Vine Theme */
+    .theme-island-2-rock-card {
+        border-radius: 20px;
+        clip-path: polygon(8% 0%, 92% 0%, 100% 8%, 100% 92%, 92% 100%, 8% 100%, 0% 92%, 0% 8%);
+    }
+    .theme-island-2-rock-card:hover {
+        border-color: #FFB74D !important;
+        box-shadow: 0 12px 0 #E65100, 0 0 20px rgba(255, 183, 77, 0.5) !important;
+    }
+
+    /* Island 3: Valley Water Bubble & Lotus Theme */
+    .theme-island-3-water-card {
+        border-radius: 40px;
+        animation: bubbleFloat 4s ease-in-out infinite alternate;
+    }
+    .theme-island-3-water-card:hover {
+        border-color: #4FC3F7 !important;
+        box-shadow: 0 12px 0 #0288D1, 0 0 24px rgba(79, 195, 247, 0.6) !important;
+    }
+
+    @@keyframes bubbleFloat {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-4px); }
+    }
+
+    /* Island 4: Treasure Lava & Golden Coins Theme */
+    .theme-island-4-volcano-card {
+        border-radius: 26px;
+        border-width: 6px !important;
+    }
+    .theme-island-4-volcano-card:hover {
+        border-color: #FFD54F !important;
+        box-shadow: 0 12px 0 #C62828, 0 0 28px rgba(255, 213, 79, 0.7) !important;
     }
 
     .correct-sparkle-badge {

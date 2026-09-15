@@ -1,4 +1,6 @@
+using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using PinyinIsland.Client.Models;
 
@@ -10,20 +12,29 @@ public interface IProgressService
     Task SaveProgressAsync(UserProgress progress);
     Task CompleteStageAsync(int stageId, int starsEarned);
     Task ResetProgressAsync();
+    Task UnlockAllProgressAsync();
     List<IslandInfo> GetAllIslands();
     IslandInfo? GetIsland(int islandId);
     StageInfo? GetStage(int stageId);
+    Task<List<PinyinTreasureItem>> GetAllTreasureItemsAsync();
+    Task<HashSet<string>> GetUnlockedTreasureLettersAsync(UserProgress progress);
+    bool IsBossStage(int stageId);
 }
 
 public class ProgressService : IProgressService
 {
     private const string StorageKey = "pinyin_island_progress_v1";
     private readonly IJSRuntime _js;
+    private readonly HttpClient _http;
+    private readonly NavigationManager _nav;
     private UserProgress? _cachedProgress;
+    private List<PinyinTreasureItem>? _cachedTreasures;
 
-    public ProgressService(IJSRuntime js)
+    public ProgressService(IJSRuntime js, HttpClient http, NavigationManager nav)
     {
         _js = js;
+        _http = http;
+        _nav = nav;
     }
 
     public async Task<UserProgress> GetProgressAsync()
@@ -108,6 +119,22 @@ public class ProgressService : IProgressService
         }
     }
 
+    public async Task UnlockAllProgressAsync()
+    {
+        var all = new UserProgress
+        {
+            TotalStars = 42,
+            UnlockedIslands = new HashSet<int> { 1, 2, 3, 4 },
+            UnlockedStages = new HashSet<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 },
+            StageStars = new Dictionary<int, int>()
+        };
+        for (int i = 1; i <= 14; i++)
+        {
+            all.StageStars[i] = 3;
+        }
+        await SaveProgressAsync(all);
+    }
+
     private static UserProgress CreateInitialProgress()
     {
         // Fresh start for a new player: 0 stars, only Island 1 Stage 1 unlocked
@@ -135,6 +162,53 @@ public class ProgressService : IProgressService
     public IslandInfo? GetIsland(int islandId) => _islands.FirstOrDefault(i => i.Id == islandId);
 
     public StageInfo? GetStage(int stageId) => _islands.SelectMany(i => i.Stages).FirstOrDefault(s => s.StageId == stageId);
+
+    public bool IsBossStage(int stageId) => stageId is 3 or 7 or 10 or 14;
+
+    public async Task<List<PinyinTreasureItem>> GetAllTreasureItemsAsync()
+    {
+        if (_cachedTreasures != null && _cachedTreasures.Count > 0)
+        {
+            return _cachedTreasures;
+        }
+
+        try
+        {
+            var baseUri = _http.BaseAddress?.ToString() ?? _nav.BaseUri;
+            if (!baseUri.EndsWith("/")) baseUri += "/";
+            var targetUri = new Uri(new Uri(baseUri), "assets/data/pinyin_treasures.json").ToString();
+
+            var items = await _http.GetFromJsonAsync<List<PinyinTreasureItem>>(targetUri);
+            if (items != null && items.Count > 0)
+            {
+                _cachedTreasures = items;
+                return _cachedTreasures;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading pinyin_treasures.json via HTTP: {ex.Message}");
+        }
+
+        _cachedTreasures = new List<PinyinTreasureItem>();
+        return _cachedTreasures;
+    }
+
+    public async Task<HashSet<string>> GetUnlockedTreasureLettersAsync(UserProgress progress)
+    {
+        var items = await GetAllTreasureItemsAsync();
+        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var item in items)
+        {
+            // If user has unlocked or completed the stage where this letter is taught
+            if (progress.IsStageUnlocked(item.StageOrigin) || progress.GetStageStars(item.StageOrigin) > 0)
+            {
+                set.Add(item.Letter);
+                set.Add(item.DisplayLetter);
+            }
+        }
+        return set;
+    }
 
     private static readonly List<IslandInfo> _islands = new()
     {

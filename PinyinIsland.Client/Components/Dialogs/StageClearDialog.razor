@@ -1,7 +1,7 @@
 @using MudBlazor
 
 <div class="stage-clear-modal-backdrop">
-    <div class="stage-clear-card bounce-modal">
+    <div class="stage-clear-card bounce-modal @(IsBossStage ? "boss-clear-card" : "")">
         <!-- Confetti Burst Emoji Particles -->
         <div class="confetti-container">
             <span class="confetti c1">🎉</span>
@@ -10,13 +10,96 @@
             <span class="confetti c4">🎊</span>
             <span class="confetti c5">🎈</span>
             <span class="confetti c6">🌟</span>
+            @if (IsBossStage)
+            {
+                <span class="confetti c7">🪙</span>
+                <span class="confetti c8">💎</span>
+                <span class="confetti c9">👑</span>
+            }
         </div>
 
-        <!-- Header Ribbon -->
-        <div class="clear-header-ribbon">
-            <h2 class="clear-title">🌟 ยอดเยี่ยมมาก! 🌟</h2>
-            <p class="clear-subtitle">ผ่านด่านแล้ว เก่งที่สุดเลย!</p>
-        </div>
+        @if (IsBossStage)
+        {
+            <!-- Boss Stage Victory Header -->
+            <div class="boss-victory-badge-top">
+                <span class="crown-emoji">👑</span>
+                <span class="boss-badge-text">พิชิตบอสประจำเกาะสำเร็จ!</span>
+            </div>
+
+            <div class="clear-header-ribbon">
+                <h2 class="boss-clear-title">🏆 ปลดล็อกหีบสมบัติ @IslandName 🏆</h2>
+                <p class="boss-clear-subtitle">กุญแจทองคำไขขุมทรัพย์ราชาพินอินสำเร็จแล้ว!</p>
+            </div>
+
+            <!-- Boss Chest & Golden Key Visual Animation Stage -->
+            <div class="boss-chest-stage">
+                <!-- Sunburst Light Rays behind chest -->
+                <div class="sunburst-rays @(IsChestOpen ? "sunburst-active" : "")"></div>
+
+                <!-- Golden Key Animation -->
+                <div class="golden-key-actor @(IsKeyInserted ? "key-inserted" : "key-flying")">
+                    <div class="golden-key-svg-wrap">
+                        <svg viewBox="0 0 100 100" class="svg-key">
+                            <defs>
+                                <radialGradient id="goldKeyGrad" cx="40%" cy="40%" r="60%">
+                                    <stop offset="0%" stop-color="#FFF9C4" />
+                                    <stop offset="50%" stop-color="#FFD54F" />
+                                    <stop offset="100%" stop-color="#FF8F00" />
+                                </radialGradient>
+                                <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#FF6F00" flood-opacity="0.6"/>
+                                </filter>
+                            </defs>
+                            <!-- Key bow / head -->
+                            <circle cx="35" cy="35" r="22" fill="url(#goldKeyGrad)" stroke="#FF6F00" stroke-width="4" filter="url(#goldGlow)"/>
+                            <circle cx="35" cy="35" r="10" fill="#FFFDE7" stroke="#FF8F00" stroke-width="2"/>
+                            <!-- Key shaft -->
+                            <rect x="31" y="52" width="8" height="38" rx="4" fill="url(#goldKeyGrad)" stroke="#FF6F00" stroke-width="2"/>
+                            <!-- Key teeth -->
+                            <rect x="39" y="72" width="14" height="6" rx="2" fill="url(#goldKeyGrad)" stroke="#FF6F00" stroke-width="2"/>
+                            <rect x="39" y="82" width="10" height="6" rx="2" fill="url(#goldKeyGrad)" stroke="#FF6F00" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Treasure Chest Graphic -->
+                <div class="chest-box-container @(IsChestOpen ? "chest-open" : "chest-locked")">
+                    <!-- Bouncing Coins Shower Emitters -->
+                    @if (IsChestOpen)
+                    {
+                        <div class="coins-shower-emitter">
+                            <span class="burst-coin bcoin-1">🪙</span>
+                            <span class="burst-coin bcoin-2">💎</span>
+                            <span class="burst-coin bcoin-3">🪙</span>
+                            <span class="burst-coin bcoin-4">✨</span>
+                            <span class="burst-coin bcoin-5">🪙</span>
+                            <span class="burst-coin bcoin-6">💎</span>
+                            <span class="burst-coin bcoin-7">⭐</span>
+                            <span class="burst-coin bcoin-8">🪙</span>
+                        </div>
+                    }
+
+                    <div class="chest-art-wrap">
+                        <img src="assets/images/chest-treasure.jpeg" alt="หีบสมบัติ" class="chest-img" />
+                    </div>
+
+                    @if (!IsChestOpen)
+                    {
+                        <div class="giant-lock-badge @(IsKeyInserted ? "lock-unlocked" : "")">
+                            <MudIcon Icon="@(IsKeyInserted ? Icons.Material.Filled.LockOpen : Icons.Material.Filled.Lock)" Class="boss-lock-icon" />
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Standard Stage Clear Header Ribbon -->
+            <div class="clear-header-ribbon">
+                <h2 class="clear-title">🌟 ยอดเยี่ยมมาก! 🌟</h2>
+                <p class="clear-subtitle">ผ่านด่านแล้ว เก่งที่สุดเลย!</p>
+            </div>
+        }
 
         <!-- Star Rating Display -->
         <div class="stars-display-row">
@@ -31,7 +114,7 @@
 
         <!-- Score / Feedback summary badge -->
         <div class="score-summary-pill">
-            <span class="summary-icon">🏆</span>
+            <span class="summary-icon">@(IsBossStage ? "👑" : "🏆")</span>
             <span class="summary-text">คะแนนเต็ม @TotalQuestions ข้อ ตอบถูกครั้งแรก @CorrectFirstTry ข้อ</span>
         </div>
 
@@ -61,7 +144,7 @@
         position: fixed;
         inset: 0;
         z-index: 9999;
-        background: rgba(0, 24, 48, 0.7);
+        background: rgba(0, 24, 48, 0.75);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         display: flex;
@@ -81,10 +164,18 @@
                     inset 0 4px 0 rgba(255, 255, 255, 0.9),
                     inset 0 -8px 0 #FFE082;
         width: 100%;
-        max-width: 500px;
-        padding: 36px 28px 30px;
+        max-width: 540px;
+        padding: 32px 28px 28px;
         text-align: center;
         overflow: visible;
+    }
+
+    .boss-clear-card {
+        border-color: #FFA000;
+        background: linear-gradient(180deg, #FFFFFF 0%, #FFF8E1 60%, #FFECB3 100%);
+        box-shadow: 0 25px 60px rgba(255, 160, 0, 0.4), 
+                    0 0 40px rgba(255, 215, 0, 0.3),
+                    inset 0 4px 0 rgba(255, 255, 255, 0.9);
     }
 
     .bounce-modal {
@@ -97,7 +188,7 @@
         100% { transform: scale(1) translateY(0); opacity: 1; }
     }
 
-    /* Floating Confetti Particles */
+    /* Confetti */
     .confetti-container {
         position: absolute;
         inset: -40px;
@@ -117,15 +208,58 @@
     .c4 { top: 50px; right: 40px; animation-delay: 0.3s; }
     .c5 { bottom: 30px; left: 30px; animation-delay: 0.5s; }
     .c6 { bottom: 20px; right: 20px; animation-delay: 0.8s; }
+    .c7 { top: 35%; left: 15px; animation-delay: 0.2s; font-size: 2.2rem; }
+    .c8 { top: 40%; right: 15px; animation-delay: 0.6s; font-size: 2.2rem; }
+    .c9 { top: 5%; left: 45%; animation-delay: 0.5s; font-size: 2.5rem; }
 
     @@keyframes floatConfetti {
         0% { transform: translateY(0) rotate(0deg) scale(0.9); }
         100% { transform: translateY(-25px) rotate(20deg) scale(1.15); }
     }
 
+    /* Boss Header Ribbon */
+    .boss-victory-badge-top {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #FF6F00 0%, #E65100 100%);
+        color: #FFFFFF;
+        padding: 6px 18px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 1rem;
+        box-shadow: 0 4px 12px rgba(230, 81, 0, 0.4);
+        margin-bottom: 12px;
+        animation: pulseBossBadge 2s infinite ease-in-out;
+    }
+
+    @@keyframes pulseBossBadge {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.06); }
+    }
+
+    .crown-emoji {
+        font-size: 1.3rem;
+    }
+
+    .boss-clear-title {
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: #BF360C;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(191, 54, 12, 0.2);
+    }
+
+    .boss-clear-subtitle {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #E65100;
+        margin-top: 4px;
+    }
+
     /* Header Ribbon */
     .clear-header-ribbon {
-        margin-bottom: 20px;
+        margin-bottom: 16px;
     }
 
     .clear-title {
@@ -134,7 +268,6 @@
         color: #E65100;
         margin: 0;
         text-shadow: 0 2px 4px rgba(230, 81, 0, 0.2);
-        letter-spacing: 0.5px;
     }
 
     .clear-subtitle {
@@ -144,17 +277,174 @@
         margin-top: 6px;
     }
 
+    /* Boss Chest Stage */
+    .boss-chest-stage {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 10px 0;
+    }
+
+    .sunburst-rays {
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 215, 0, 0.8) 0%, rgba(255, 160, 0, 0.4) 45%, transparent 70%);
+        opacity: 0;
+        transform: scale(0.5);
+        transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        pointer-events: none;
+    }
+
+    .sunburst-active {
+        opacity: 1;
+        transform: scale(1.3);
+        animation: spinSunburst 10s linear infinite;
+    }
+
+    @@keyframes spinSunburst {
+        from { transform: scale(1.3) rotate(0deg); }
+        to { transform: scale(1.3) rotate(360deg); }
+    }
+
+    /* Golden Key Actor */
+    .golden-key-actor {
+        position: absolute;
+        z-index: 10;
+        width: 70px;
+        height: 70px;
+        pointer-events: none;
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .key-flying {
+        top: -20px;
+        right: 40px;
+        transform: scale(1.3) rotate(-30deg);
+        filter: drop-shadow(0 8px 16px rgba(255, 143, 0, 0.7));
+    }
+
+    .key-inserted {
+        top: 55px;
+        left: calc(50% - 35px);
+        transform: scale(0.85) rotate(90deg);
+        opacity: 0;
+        transition: transform 0.4s ease, opacity 0.3s 0.2s;
+    }
+
+    .svg-key {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Chest Box */
+    .chest-box-container {
+        position: relative;
+        width: 180px;
+        height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+    }
+
+    .chest-art-wrap {
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 4px solid #FFA000;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .chest-open .chest-art-wrap {
+        transform: scale(1.12);
+        box-shadow: 0 0 35px rgba(255, 215, 0, 0.8), 0 14px 30px rgba(0,0,0,0.3);
+        border-color: #FFD54F;
+    }
+
+    .chest-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .giant-lock-badge {
+        position: absolute;
+        bottom: 15px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FFE082 0%, #FFB300 100%);
+        border: 3px solid #BF360C;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #BF360C;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .lock-unlocked {
+        transform: scale(1.3) rotate(20deg);
+        background: #C8E6C9;
+        color: #2E7D32;
+        border-color: #2E7D32;
+    }
+
+    .boss-lock-icon {
+        font-size: 1.8rem !important;
+    }
+
+    /* Coin Shower Burst */
+    .coins-shower-emitter {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 8;
+    }
+
+    .burst-coin {
+        position: absolute;
+        font-size: 2.2rem;
+        top: 40%;
+        left: 45%;
+        opacity: 0;
+        animation: coinBurst 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    .bcoin-1 { --tx: -80px; --ty: -100px; animation-delay: 0.05s; }
+    .bcoin-2 { --tx: 80px; --ty: -110px; animation-delay: 0.12s; }
+    .bcoin-3 { --tx: -110px; --ty: -50px; animation-delay: 0.18s; }
+    .bcoin-4 { --tx: 110px; --ty: -40px; animation-delay: 0.22s; }
+    .bcoin-5 { --tx: -50px; --ty: -130px; animation-delay: 0.28s; }
+    .bcoin-6 { --tx: 50px; --ty: -125px; animation-delay: 0.32s; }
+    .bcoin-7 { --tx: 0px; --ty: -140px; animation-delay: 0.38s; }
+    .bcoin-8 { --tx: -130px; --ty: -90px; animation-delay: 0.42s; }
+
+    @@keyframes coinBurst {
+        0% { transform: translate(0, 0) scale(0.3); opacity: 0; }
+        30% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1.3); }
+        80% { opacity: 1; transform: translate(var(--tx), calc(var(--ty) + 20px)) scale(1.1); }
+        100% { opacity: 0.9; transform: translate(var(--tx), calc(var(--ty) + 40px)) scale(1); }
+    }
+
     /* Stars Row */
     .stars-display-row {
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 20px;
-        margin: 24px 0;
+        margin: 18px 0;
     }
 
     .star-wrapper {
-        font-size: 4rem;
+        font-size: 3.8rem;
         line-height: 1;
         transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
@@ -188,8 +478,8 @@
         background: #FFF8E1;
         border: 2px solid #FFE082;
         border-radius: 999px;
-        padding: 10px 24px;
-        margin-bottom: 28px;
+        padding: 8px 22px;
+        margin-bottom: 24px;
         box-shadow: 0 4px 10px rgba(255, 179, 0, 0.15);
     }
 
@@ -212,7 +502,7 @@
 
     .tactile-action-btn {
         flex: 1;
-        min-height: 64px;
+        min-height: 60px;
         border-radius: 24px;
         border: none;
         cursor: pointer;
@@ -264,17 +554,27 @@
 
     @@media (max-width: 480px) {
         .stage-clear-card {
-            padding: 28px 18px 24px;
+            padding: 24px 16px 20px;
+        }
+        .boss-clear-title {
+            font-size: 1.45rem;
         }
         .clear-title {
-            font-size: 1.8rem;
+            font-size: 1.7rem;
         }
         .star-wrapper {
-            font-size: 3.2rem;
+            font-size: 3rem;
         }
         .tactile-action-btn {
             font-size: 1.1rem;
-            min-height: 56px;
+            min-height: 54px;
+        }
+        .boss-chest-stage {
+            height: 150px;
+        }
+        .chest-box-container {
+            width: 140px;
+            height: 110px;
         }
     }
 </style>

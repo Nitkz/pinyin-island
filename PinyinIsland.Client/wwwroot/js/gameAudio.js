@@ -227,6 +227,123 @@ window.gameAudio = {
                 osc.start(start);
                 osc.stop(start + 0.25);
             });
+        } else if (type === 'keyUnlock') {
+            // Metallic golden key insertion and turning click
+            var osc1 = ctx.createOscillator();
+            var gain1 = ctx.createGain();
+            osc1.type = 'triangle';
+            osc1.frequency.setValueAtTime(1200, now);
+            osc1.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+            gain1.gain.setValueAtTime(0.3, now);
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.12);
+
+            // Heavy golden lock click
+            var osc2 = ctx.createOscillator();
+            var gain2 = ctx.createGain();
+            osc2.type = 'square';
+            osc2.frequency.setValueAtTime(320, now + 0.15);
+            osc2.frequency.exponentialRampToValueAtTime(160, now + 0.3);
+            gain2.gain.setValueAtTime(0.35, now + 0.15);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start(now + 0.15);
+            osc2.stop(now + 0.35);
+
+            // Magic Unlock Chime
+            [1046.5, 1318.51, 1567.98, 2093].forEach(function (freq, i) {
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                var start = now + 0.28 + (i * 0.07);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, start);
+                gain.gain.setValueAtTime(0.25, start);
+                gain.gain.exponentialRampToValueAtTime(0.001, start + 0.4);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(start);
+                osc.stop(start + 0.4);
+            });
+        } else if (type === 'chestOpen') {
+            // Heavy wooden lid creak + pop + magical explosion
+            var oscCreak = ctx.createOscillator();
+            var gainCreak = ctx.createGain();
+            oscCreak.type = 'sawtooth';
+            oscCreak.frequency.setValueAtTime(140, now);
+            oscCreak.frequency.linearRampToValueAtTime(280, now + 0.25);
+            gainCreak.gain.setValueAtTime(0.2, now);
+            gainCreak.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+            oscCreak.connect(gainCreak);
+            gainCreak.connect(ctx.destination);
+            oscCreak.start(now);
+            oscCreak.stop(now + 0.28);
+
+            // Grand Sunburst Fanfare Chords
+            var grandNotes = [523.25, 659.25, 783.99, 1046.5, 1318.51, 1567.98, 2093];
+            grandNotes.forEach(function (freq, i) {
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                var start = now + 0.25 + (i * 0.06);
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, start);
+                gain.gain.setValueAtTime(0.35, start);
+                gain.gain.exponentialRampToValueAtTime(0.001, start + 0.65);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(start);
+                osc.stop(start + 0.65);
+            });
+        } else if (type === 'coinShower') {
+            // Multi-ping bouncing coins cascade
+            for (var c = 0; c < 12; c++) {
+                (function (index) {
+                    var osc = ctx.createOscillator();
+                    var gain = ctx.createGain();
+                    var start = now + (index * 0.07) + (Math.random() * 0.03);
+                    var freqs = [1760, 1975.53, 2093, 2349.32, 2637.02, 3135.96];
+                    var freq = freqs[Math.floor(Math.random() * freqs.length)];
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, start);
+                    gain.gain.setValueAtTime(0.18, start);
+                    gain.gain.exponentialRampToValueAtTime(0.001, start + 0.25);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(start);
+                    osc.stop(start + 0.25);
+                })(c);
+            }
+        } else if (type === 'backpackOpen') {
+            // Snappy pouch unzip/open whoosh + soft bell
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(350, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+            gain.gain.setValueAtTime(0.22, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.18);
+
+            // Gentle sparkle
+            [880, 1318.51].forEach(function (f, idx) {
+                var sOsc = ctx.createOscillator();
+                var sGain = ctx.createGain();
+                var sTime = now + 0.1 + (idx * 0.08);
+                sOsc.type = 'triangle';
+                sOsc.frequency.setValueAtTime(f, sTime);
+                sGain.gain.setValueAtTime(0.2, sTime);
+                sGain.gain.exponentialRampToValueAtTime(0.001, sTime + 0.3);
+                sOsc.connect(sGain);
+                sGain.connect(ctx.destination);
+                sOsc.start(sTime);
+                sOsc.stop(sTime + 0.3);
+            });
         }
     },
 
@@ -305,6 +422,43 @@ window.gameAudio = {
     pauseBgm: function () {
         if (this.bgmAudio) {
             this.bgmAudio.pause();
+        }
+    },
+
+    playVideo: function (elementId) {
+        var v = document.getElementById(elementId);
+        if (v) {
+            v.playsInline = true;
+            // Attempt to play with sound
+            var p = v.play();
+            if (p !== undefined) {
+                p.catch(function (err) {
+                    console.log("Autoplay with sound restricted, playing muted until interaction:", err);
+                    v.muted = true;
+                    v.play().catch(function(e) { console.log(e); });
+                    
+                    var unmuteOnTouch = function () {
+                        v.muted = false;
+                        v.volume = 1.0;
+                        v.play().catch(function (e) { console.log(e); });
+                        document.removeEventListener('click', unmuteOnTouch);
+                        document.removeEventListener('touchstart', unmuteOnTouch);
+                    };
+                    document.addEventListener('click', unmuteOnTouch, { once: true });
+                    document.addEventListener('touchstart', unmuteOnTouch, { once: true });
+                });
+            }
+        }
+    },
+
+    setVideoMuted: function (elementId, isMuted) {
+        var v = document.getElementById(elementId);
+        if (v) {
+            v.muted = isMuted;
+            if (!isMuted) {
+                v.volume = 1.0;
+                v.play().catch(function (err) { console.log("Error unmuting video:", err); });
+            }
         }
     }
 };

@@ -1,0 +1,377 @@
+@using MudBlazor
+@using PinyinIsland.Client.Models
+@using PinyinIsland.Client.Services
+@inject IProgressService ProgressService
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+@inject ISnackbar Snackbar
+
+@if (IsLocalhost)
+{
+    <!-- Floating Dev Test Mode Trigger Pill -->
+    <div class="dev-toolbar-container">
+        @if (!_isOpen)
+        {
+            <button type="button"
+                    class="dev-pill-trigger"
+                    @onclick="ToggleOpen"
+                    title="เปิด Dev / Test Toolbar สำหรับ localhost">
+                <span class="dev-icon">🛠️</span>
+                <span class="dev-text">Test Mode (5125)</span>
+            </button>
+        }
+        else
+        {
+            <!-- Expanded Dev Toolbar Floating Card -->
+            <div class="dev-panel-card bounce-dev">
+                <div class="dev-panel-header">
+                    <div class="dev-header-title">
+                        <span class="dev-icon">🛠️</span>
+                        <span>Dev / Test Control Panel</span>
+                    </div>
+                    <button type="button" class="btn-dev-close" @onclick="ToggleOpen">
+                        <MudIcon Icon="@Icons.Material.Filled.Close" Class="dev-close-icon" />
+                    </button>
+                </div>
+
+                <div class="dev-panel-body">
+                    <!-- Section 1: Island Boss Chests Preview -->
+                    <div class="dev-section">
+                        <div class="dev-section-title">👑 ทดสอบหีบสมบัติบอส (Boss Chest)</div>
+                        <div class="dev-btn-group">
+                            <button type="button" class="dev-btn btn-boss-1" @onclick='() => TriggerBossChest(1, 3, "เกาะป่าผลไม้")'>
+                                🏝️ เกาะ 1 (ด่าน 3)
+                            </button>
+                            <button type="button" class="dev-btn btn-boss-2" @onclick='() => TriggerBossChest(2, 7, "เกาะภูผาหิน")'>
+                                ⛰️ เกาะ 2 (ด่าน 7)
+                            </button>
+                            <button type="button" class="dev-btn btn-boss-3" @onclick='() => TriggerBossChest(3, 10, "หุบเขาสระเดี่ยว")'>
+                                🌊 เกาะ 3 (ด่าน 10)
+                            </button>
+                            <button type="button" class="dev-btn btn-boss-4" @onclick='() => TriggerBossChest(4, 14, "ถ้ำมหาสมบัติ")'>
+                                🌋 เกาะ 4 (ด่าน 14)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Treasure Backpack & Progress -->
+                    <div class="dev-section">
+                        <div class="dev-section-title">🎒 กระเป๋าสมบัติพินอิน (47 ชิ้น)</div>
+                        <div class="dev-btn-group">
+                            <button type="button" class="dev-btn btn-action" @onclick="OpenBackpackPreview">
+                                🎒 เปิดกระเป๋าสมบัติ
+                            </button>
+                            <button type="button" class="dev-btn btn-unlock-all" @onclick="UnlockAll">
+                                ✨ ปลดล็อกครบ 47 ตัว
+                            </button>
+                            <button type="button" class="dev-btn btn-reset" @onclick="ResetProgress">
+                                🔄 รีเซ็ตความคืบหน้า
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Thematic UI Switcher (If on GamePlay or Map) -->
+                    @if (OnThemeChanged.HasDelegate)
+                    {
+                        <div class="dev-section">
+                            <div class="dev-section-title">🏝️ สลับธีมตัวเลือกเกาะ 1-4</div>
+                            <div class="dev-btn-group">
+                                <button type="button" class="dev-btn btn-theme" @onclick="() => SwitchTheme(1)">
+                                    🥥 เกาะ 1 (มะพร้าว/หอย)
+                                </button>
+                                <button type="button" class="dev-btn btn-theme" @onclick="() => SwitchTheme(2)">
+                                    💎 เกาะ 2 (คริสตัล/เถาวัลย์)
+                                </button>
+                                <button type="button" class="dev-btn btn-theme" @onclick="() => SwitchTheme(3)">
+                                    🪷 เกาะ 3 (ใบบัว/ฟองสบู่)
+                                </button>
+                                <button type="button" class="dev-btn btn-theme" @onclick="() => SwitchTheme(4)">
+                                    🧰 เกาะ 4 (หีบทอง/เหรียญ)
+                                </button>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Section 4: Audio SFX Test -->
+                    <div class="dev-section">
+                        <div class="dev-section-title">🔊 ทดสอบเสียง SFX</div>
+                        <div class="dev-btn-group-grid">
+                            <button type="button" class="dev-mini-btn" @onclick='() => PlaySfx("keyUnlock")'>🗝️ Key Unlock</button>
+                            <button type="button" class="dev-mini-btn" @onclick='() => PlaySfx("chestOpen")'>🧰 Chest Open</button>
+                            <button type="button" class="dev-mini-btn" @onclick='() => PlaySfx("coinShower")'>🪙 Coin Shower</button>
+                            <button type="button" class="dev-mini-btn" @onclick='() => PlaySfx("backpackOpen")'>🎒 Backpack</button>
+                            <button type="button" class="dev-mini-btn" @onclick='() => PlaySfx("correct")'>🔔 Correct</button>
+                            <button type="button" class="dev-mini-btn" @onclick='() => PlaySfx("cheer")'>🎉 Cheer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Preview Modal for Boss Chest if triggered from Dev Toolbar -->
+    @if (_previewBossChest)
+    {
+        <StageClearDialog StarsEarned="3"
+                          TotalQuestions="4"
+                          CorrectFirstTry="4"
+                          IsBossStage="true"
+                          IslandId="_previewIslandId"
+                          IslandName="@_previewIslandName"
+                          OnReplay="CloseBossChestPreview"
+                          OnNextStage="CloseBossChestPreview" />
+    }
+
+    <!-- Preview Modal for Backpack if triggered from Dev Toolbar -->
+    @if (_previewBackpack)
+    {
+        <TreasureBackpackDialog OnCloseCallback="CloseBackpackPreview" />
+    }
+}
+
+<style>
+    .dev-toolbar-container {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        z-index: 99999;
+        font-family: 'Fredoka', 'Prompt', sans-serif;
+    }
+
+    .dev-pill-trigger {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+        color: #38BDF8;
+        border: 2px solid #38BDF8;
+        border-radius: 999px;
+        padding: 8px 18px;
+        font-size: 0.95rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 16px rgba(56, 189, 248, 0.4);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        outline: none;
+    }
+
+    .dev-pill-trigger:hover {
+        transform: scale(1.06) translateY(-2px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 24px rgba(56, 189, 248, 0.7);
+    }
+
+    .dev-panel-card {
+        background: rgba(15, 23, 42, 0.94);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 2px solid #38BDF8;
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.25);
+        width: 380px;
+        max-width: 90vw;
+        color: #F8FAFC;
+        overflow: hidden;
+    }
+
+    .bounce-dev {
+        animation: devBounce 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @@keyframes devBounce {
+        0% { transform: scale(0.8) translateY(20px); opacity: 0; }
+        100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .dev-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 18px;
+        background: rgba(30, 41, 59, 0.8);
+        border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .dev-header-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 800;
+        font-size: 1rem;
+        color: #38BDF8;
+    }
+
+    .btn-dev-close {
+        background: transparent;
+        border: none;
+        color: #94A3B8;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+    }
+
+    .btn-dev-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #F8FAFC;
+    }
+
+    .dev-panel-body {
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .dev-section {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .dev-section-title {
+        font-size: 0.85rem;
+        font-weight: 800;
+        color: #CBD5E1;
+        letter-spacing: 0.5px;
+    }
+
+    .dev-btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .dev-btn-group-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+
+    .dev-btn {
+        flex: 1 1 calc(50% - 4px);
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        background: #1E293B;
+        color: #F8FAFC;
+        text-align: center;
+        transition: all 0.12s ease;
+    }
+
+    .dev-btn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.2);
+    }
+
+    .btn-boss-1 { background: #15803D; }
+    .btn-boss-2 { background: #C2410C; }
+    .btn-boss-3 { background: #0369A1; }
+    .btn-boss-4 { background: #B91C1C; }
+
+    .btn-action { background: #0284C7; }
+    .btn-unlock-all { background: #EAB308; color: #713F12; font-weight: 800; }
+    .btn-reset { background: #475569; }
+    .btn-theme { background: #334155; }
+
+    .dev-mini-btn {
+        padding: 6px 8px;
+        border-radius: 8px;
+        border: 1px solid #475569;
+        background: #1E293B;
+        color: #E2E8F0;
+        font-size: 0.78rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .dev-mini-btn:hover {
+        background: #334155;
+        color: #38BDF8;
+    }
+</style>
+
+@code {
+    [Parameter] public EventCallback<int> OnThemeChanged { get; set; }
+    [Parameter] public EventCallback OnProgressStateChanged { get; set; }
+
+    private bool _isOpen = false;
+    private bool _previewBossChest = false;
+    private bool _previewBackpack = false;
+    private int _previewIslandId = 1;
+    private string _previewIslandName = "เกาะป่าผลไม้";
+
+    private bool IsLocalhost => Nav.BaseUri.Contains("localhost") || Nav.BaseUri.Contains("127.0.0.1") || Nav.BaseUri.Contains("5125");
+
+    private void ToggleOpen()
+    {
+        _isOpen = !_isOpen;
+    }
+
+    private void TriggerBossChest(int islandId, int stageId, string islandName)
+    {
+        _previewIslandId = islandId;
+        _previewIslandName = islandName;
+        _previewBossChest = true;
+    }
+
+    private void CloseBossChestPreview()
+    {
+        _previewBossChest = false;
+    }
+
+    private void OpenBackpackPreview()
+    {
+        _previewBackpack = true;
+    }
+
+    private void CloseBackpackPreview()
+    {
+        _previewBackpack = false;
+    }
+
+    private async Task UnlockAll()
+    {
+        await ProgressService.UnlockAllProgressAsync();
+        Snackbar.Add("✨ ปลดล็อกครบ 47 ตัว และด่านทั้งหมดแล้ว!", Severity.Success);
+        if (OnProgressStateChanged.HasDelegate)
+        {
+            await OnProgressStateChanged.InvokeAsync();
+        }
+    }
+
+    private async Task ResetProgress()
+    {
+        await ProgressService.ResetProgressAsync();
+        Snackbar.Add("🔄 รีเซ็ตความคืบหน้าเป็นจุดเริ่มต้นแล้ว!", Severity.Info);
+        if (OnProgressStateChanged.HasDelegate)
+        {
+            await OnProgressStateChanged.InvokeAsync();
+        }
+    }
+
+    private async Task SwitchTheme(int islandId)
+    {
+        if (OnThemeChanged.HasDelegate)
+        {
+            await OnThemeChanged.InvokeAsync(islandId);
+            Snackbar.Add($"🏝️ สลับธีมแสดงผลเป็น เกาะที่ {islandId} เรียบร้อย!", Severity.Info);
+        }
+    }
+
+    private async Task PlaySfx(string sfxName)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.playSfx", sfxName);
+        }
+        catch { }
+    }
+}

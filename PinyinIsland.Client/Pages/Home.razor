@@ -50,13 +50,12 @@
         </div>
 
         <!-- Animated Mascot Showcase (Panda Pirate) -->
-        <div class="mascot-stage">
+        <div class="mascot-stage" @onclick="ToggleSound" title="แตะน้องหมีเพื่อเปิด/ปิดเสียง" style="cursor: pointer;">
             <div class="mascot-frame bounce-anim">
                 <video id="mascotVideo"
                        class="mascot-video"
                        autoplay
                        loop
-                       muted
                        playsinline
                        poster="assets/images/panda-pirate.jpeg">
                     <source src="assets/videos/panda-waving.mp4" type="video/mp4" />
@@ -67,7 +66,7 @@
             </div>
 
             <div class="island-speech-bubble">
-                <span>พร้อมไปล่าสมบัติกับน้องหมีหรือยัง? ✨</span>
+                <span>พร้อมไปล่าสมบัติกับน้องหมีหรือยัง? ✨ (แตะตัวเพื่อเปิด/ปิดเสียง)</span>
             </div>
         </div>
 

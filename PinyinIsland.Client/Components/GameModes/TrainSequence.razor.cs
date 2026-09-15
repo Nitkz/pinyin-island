@@ -9,6 +9,7 @@ public partial class TrainSequence : ComponentBase
     [Inject] private IJSRuntime JS { get; set; } = default!;
 
     [Parameter] public QuestionItem Question { get; set; } = default!;
+    [Parameter] public int IslandId { get; set; } = 1;
     [Parameter] public EventCallback<bool> OnQuestionCompleted { get; set; }
 
     public enum TrafficLightState { Yellow, Green, Red }
@@ -207,4 +208,26 @@ public partial class TrainSequence : ComponentBase
             StateHasChanged();
         }
     }
+
+    public string GetThemeClass() => IslandId switch
+    {
+        1 => "theme-island-1-fruit",
+        2 => "theme-island-2-rock",
+        3 => "theme-island-3-water",
+        4 => "theme-island-4-volcano",
+        _ => "theme-island-1-fruit"
+    };
+
+    public string GetThemeOrnament(int index) => (IslandId, index % 2) switch
+    {
+        (1, 0) => "🥥",
+        (1, 1) => "🐚",
+        (2, 0) => "💎",
+        (2, 1) => "🌿",
+        (3, 0) => "🪷",
+        (3, 1) => "🫧",
+        (4, 0) => "🧰",
+        (4, 1) => "🪙",
+        _ => "✨"
+    };
 }

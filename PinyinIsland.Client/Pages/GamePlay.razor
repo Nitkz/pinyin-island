@@ -175,18 +175,21 @@
                 {
                     <!-- MODE 2: TRAIN SEQUENCE -->
                     <TrainSequence Question="@CurrentQuestion"
+                                   IslandId="@CurrentIslandId"
                                    OnQuestionCompleted="HandleQuestionCompleted" />
                 }
                 else if (CurrentQuestion?.Type == "card_match")
                 {
                     <!-- MODE 3: CARD MATCH -->
                     <CardMatch Question="@CurrentQuestion"
+                               IslandId="@CurrentIslandId"
                                OnQuestionCompleted="HandleQuestionCompleted" />
                 }
                 else if (CurrentQuestion != null)
                 {
                     <!-- MODE 1: LISTEN & TAP -->
                     <ListenAndTap Question="@CurrentQuestion"
+                                  IslandId="@CurrentIslandId"
                                   OnQuestionCompleted="HandleQuestionCompleted" />
                 }
             </main>
@@ -201,9 +204,15 @@
         <StageClearDialog StarsEarned="@CalculatedFinalStars"
                           TotalQuestions="@Questions.Count"
                           CorrectFirstTry="@CorrectFirstTryCount"
+                          IsBossStage="@IsBossStage"
+                          IslandId="@CurrentIslandId"
+                          IslandName="@CurrentIslandName"
                           OnReplay="ReplayStage"
                           OnNextStage="GoToNextStage" />
     }
+
+    <!-- Dev / Test Mode Floating Toolbar for localhost -->
+    <DevTestToolbar OnThemeChanged="HandleDevThemeChanged" />
 </div>
 
 <style>

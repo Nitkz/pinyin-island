@@ -41,8 +41,20 @@ public partial class GamePlay : ComponentBase, IAsyncDisposable
     public int CorrectFirstTryCount { get; private set; } = 0;
     public int CalculatedFinalStars { get; private set; } = 3;
 
+    // Island Theme & Boss info
+    public int? DevOverrideIslandTheme { get; private set; }
+    public int CurrentIslandId => DevOverrideIslandTheme ?? (Stage?.IslandId ?? 1);
+    public string CurrentIslandName => ProgressService.GetIsland(CurrentIslandId)?.Name ?? "เกาะมหาสมบัติ";
+    public bool IsBossStage => ProgressService.IsBossStage(StageId);
+
     private int _lastLoadedStageId = -1;
     private bool _shouldAutoPlayFirstVideo = false;
+
+    public void HandleDevThemeChanged(int themeIslandId)
+    {
+        DevOverrideIslandTheme = themeIslandId;
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {
