@@ -380,7 +380,7 @@
           "id": 28,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/y.mp3",
-          "thai_sound": "อี / ยา",
+          "thai_sound": "อี",
           "target_char": "y",
           "options": ["y", "w", "i"],
           "answer": "y",
@@ -393,7 +393,7 @@
           "id": 29,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/w.mp3",
-          "thai_sound": "อู / วา",
+          "thai_sound": "อู",
           "target_char": "w",
           "options": ["w", "y", "u"],
           "answer": "w",
@@ -407,8 +407,8 @@
           "type": "card_match",
           "prompt_text": "เปิดการ์ดจับคู่พยัญชนะพิเศษ",
           "pairs": [
-            { "char": "y", "audio": "assets/audio/initials/y.mp3", "thai": "อี / ยา" },
-            { "char": "w", "audio": "assets/audio/initials/w.mp3", "thai": "อู / วา" }
+            { "char": "y", "audio": "assets/audio/initials/y.mp3", "thai": "อี" },
+            { "char": "w", "audio": "assets/audio/initials/w.mp3", "thai": "อู" }
           ]
         }
       ]
@@ -623,7 +623,7 @@
           "id": 45,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ui.mp3",
-          "thai_sound": "อุย / เวย",
+          "thai_sound": "เวย",
           "target_char": "ui",
           "options": ["ui", "iu", "ou"],
           "answer": "ui",
@@ -652,7 +652,7 @@
           "pairs": [
             { "char": "ai", "audio": "assets/audio/finals/ai.mp3", "thai": "ไอ" },
             { "char": "ei", "audio": "assets/audio/finals/ei.mp3", "thai": "เอย" },
-            { "char": "ui", "audio": "assets/audio/finals/ui.mp3", "thai": "อุย / เวย" },
+            { "char": "ui", "audio": "assets/audio/finals/ui.mp3", "thai": "เวย" },
             { "char": "ao", "audio": "assets/audio/finals/ao.mp3", "thai": "เอา" }
           ]
         }
@@ -708,7 +708,7 @@
           "id": 51,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ue.mp3",
-          "thai_sound": "เอวีย",
+          "thai_sound": "เยวี่ย",
           "target_char": "üe",
           "options": ["ie", "üe", "ui"],
           "answer": "üe",
@@ -753,7 +753,7 @@
             { "char": "ou", "audio": "assets/audio/finals/ou.mp3", "thai": "โอว" },
             { "char": "iu", "audio": "assets/audio/finals/iu.mp3", "thai": "อิว" },
             { "char": "ie", "audio": "assets/audio/finals/ie.mp3", "thai": "เอีย" },
-            { "char": "üe", "audio": "assets/audio/finals/ue.mp3", "thai": "เอวีย" },
+            { "char": "üe", "audio": "assets/audio/finals/ue.mp3", "thai": "เยวี่ย" },
             { "char": "er", "audio": "assets/audio/finals/er.mp3", "thai": "เออร์" }
           ]
         }
@@ -897,7 +897,7 @@
           "id": 64,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ong.mp3",
-          "thai_sound": "โอง / อุง",
+          "thai_sound": "อุง",
           "target_char": "ong",
           "options": ["ong", "ou", "eng"],
           "answer": "ong",
@@ -914,7 +914,7 @@
             { "char": "ang", "audio": "assets/audio/finals/ang.mp3", "thai": "อัง" },
             { "char": "eng", "audio": "assets/audio/finals/eng.mp3", "thai": "เอิง" },
             { "char": "ing", "audio": "assets/audio/finals/ing.mp3", "thai": "อิง" },
-            { "char": "ong", "audio": "assets/audio/finals/ong.mp3", "thai": "โอง" }
+            { "char": "ong", "audio": "assets/audio/finals/ong.mp3", "thai": "อุง" }
           ]
         }
       ]
