@@ -20,6 +20,16 @@ public partial class StageClearDialog : ComponentBase
     public bool IsChestOpen { get; private set; } = false;
     public bool ShowSparkles { get; private set; } = false;
 
+    public string ChestImageUrl
+    {
+        get
+        {
+            var island = Math.Clamp(IslandId, 1, 4);
+            var state = IsChestOpen ? "open" : "closed";
+            return $"assets/images/chests/chest-island-{island}-{state}.jpeg";
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         if (IsBossStage)
