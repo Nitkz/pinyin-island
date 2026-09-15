@@ -6,7 +6,7 @@
 
 <PageTitle>@(Stage?.Title ?? "เล่นเกม") - Pinyin Island</PageTitle>
 
-<div class="gameplay-container">
+<div class="gameplay-container island-bg-theme-@CurrentIslandId">
     @if (CurrentPhase == GamePhase.Learn)
     {
         <!-- =========================================================================
@@ -226,22 +226,55 @@
         min-height: 100vh;
         width: 100vw;
         overflow-x: hidden;
-        background: url('assets/images/bg-beach.jpeg') no-repeat center center fixed;
+        background: url('assets/images/backgrounds/island-bg-1.jpeg') no-repeat center center fixed;
         background-size: cover;
         display: flex;
         flex-direction: column;
         user-select: none;
         -webkit-user-select: none;
         font-family: 'Fredoka', 'Prompt', sans-serif;
+        transition: background-image 0.4s ease-in-out;
     }
 
     .gameplay-container::before {
         content: '';
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.15) 0%, rgba(0, 80, 140, 0.35) 100%);
         pointer-events: none;
         z-index: 1;
+        transition: background 0.4s ease;
+    }
+
+    /* Island 1: Fruit Beach (Tropical Ocean Vibe) */
+    .island-bg-theme-1 {
+        background-image: url('assets/images/backgrounds/island-bg-1.jpeg') !important;
+    }
+    .island-bg-theme-1::before {
+        background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.12) 0%, rgba(0, 80, 140, 0.35) 100%);
+    }
+
+    /* Island 2: Crystal Cliff (Amethyst Mountain Vibe) */
+    .island-bg-theme-2 {
+        background-image: url('assets/images/backgrounds/island-bg-2.jpeg') !important;
+    }
+    .island-bg-theme-2::before {
+        background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.12) 0%, rgba(67, 24, 138, 0.35) 100%);
+    }
+
+    /* Island 3: Jade Pond & Valley (Emerald Blossom Vibe) */
+    .island-bg-theme-3 {
+        background-image: url('assets/images/backgrounds/island-bg-3.jpeg') !important;
+    }
+    .island-bg-theme-3::before {
+        background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.12) 0%, rgba(6, 95, 70, 0.35) 100%);
+    }
+
+    /* Island 4: Lava Cave & Royal Treasury (Volcanic Gold Vibe) */
+    .island-bg-theme-4 {
+        background-image: url('assets/images/backgrounds/island-bg-4.jpeg') !important;
+    }
+    .island-bg-theme-4::before {
+        background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.12) 0%, rgba(127, 29, 29, 0.40) 100%);
     }
 
     /* Common Tactile Buttons */
