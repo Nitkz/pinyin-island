@@ -1,0 +1,1163 @@
+@page "/map"
+@implements IAsyncDisposable
+@inject IProgressService ProgressService
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+@inject IJSRuntime JS
+
+
+<PageTitle>แผนที่เกาะมหาสมบัติ - Pinyin Island</PageTitle>
+
+<div class="map-page-container">
+    <!-- Top Bar Navigation & Statistics -->
+    <header class="map-top-bar">
+        <div class="top-bar-left">
+            <button type="button"
+                    class="tactile-round-btn btn-back"
+                    @onclick="GoBackHome"
+                    title="กลับหน้าหลัก"
+                    aria-label="กลับหน้าหลัก">
+                <MudIcon Icon="@Icons.Material.Filled.Home" Class="top-btn-icon" />
+            </button>
+            
+            <div class="page-title-badge">
+                <span class="badge-icon">🗺️</span>
+                <span class="badge-title">แผนที่ 4 เกาะสมบัติ</span>
+            </div>
+        </div>
+
+        <div class="top-bar-right">
+            <!-- Total Stars Display Chip -->
+            <div class="total-stars-chip" title="ดาวทั้งหมดที่สะสมได้">
+                <span class="star-icon-anim">⭐</span>
+                <span class="star-count-num">@_progress.TotalStars</span>
+                <span class="star-max-label">/ 42</span>
+            </div>
+
+            <!-- Audio toggle button -->
+            <button type="button"
+                    class="tactile-round-btn btn-sound @(_isMuted ? "muted" : "")"
+                    @onclick="ToggleSound"
+                    title="@(_isMuted ? "เปิดเสียง" : "ปิดเสียง")"
+                    aria-label="เปิดปิดเสียง">
+                <MudIcon Icon="@(_isMuted ? Icons.Material.Filled.VolumeOff : Icons.Material.Filled.MusicNote)"
+                         Class="top-btn-icon" />
+            </button>
+        </div>
+    </header>
+
+    <!-- Map Viewport Container -->
+    <main class="map-viewport">
+        <!-- Subtitle guide for kid & teacher -->
+        <div class="map-instruction-pill">
+            <span class="instruction-sparkle">✨</span>
+            <span>แตะเลือกเกาะที่ปลดล็อก เพื่อเริ่มผจญภัยในด่านต่างๆ ได้เลย!</span>
+            <span class="instruction-sparkle">✨</span>
+        </div>
+
+        <!-- Islands Carousel / Horizontal Scroll Container -->
+        <div class="islands-track-container">
+            <div class="islands-track">
+                @foreach (var island in _islands)
+                {
+                    var isUnlocked = _progress.IsIslandUnlocked(island.Id);
+                    var islandStars = CalculateIslandStars(island);
+                    var maxIslandStars = island.Stages.Count * 3;
+
+                    <div class="island-card-wrapper">
+                        <!-- Connecting path / dash indicator between islands -->
+                        @if (island.Id < _islands.Count)
+                        {
+                            <div class="island-connector-trail @(isUnlocked ? "active-trail" : "")">
+                                <span class="trail-dot"></span>
+                                <span class="trail-dot"></span>
+                                <span class="trail-dot"></span>
+                            </div>
+                        }
+
+                        <div class="island-card @(isUnlocked ? "unlocked-island bounce-card" : "locked-island")"
+                             @onclick="() => SelectIsland(island)"
+                             tabindex="0"
+                             role="button"
+                             aria-label="@island.Name @(isUnlocked ? "เปิดแล้ว" : "ล็อกอยู่")">
+                            
+                            <!-- Island Card Header / Badge -->
+                            <div class="island-header-badge" style="background: @island.ThemeColor;">
+                                <span class="island-emoji">@island.BadgeIcon</span>
+                                <span class="island-num-label">เกาะที่ @island.Id</span>
+                            </div>
+
+                            <!-- Island Visual & Lock Overlay -->
+                            <div class="island-image-box">
+                                <img src="@island.ImageUrl"
+                                     alt="@island.Name"
+                                     class="island-img" />
+                                
+                                @if (!isUnlocked)
+                                {
+                                    <div class="island-lock-overlay">
+                                        <div class="lock-circle">
+                                            <MudIcon Icon="@Icons.Material.Filled.Lock" Class="lock-svg" />
+                                        </div>
+                                        <span class="lock-text">ล็อกอยู่</span>
+                                        <span class="lock-hint">สะสมดาวเพื่อปลดล็อก</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="island-tap-pulse">
+                                        <span>แตะเลย! 👉</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Island Info Body -->
+                            <div class="island-content">
+                                <h3 class="island-title">@island.Name</h3>
+                                <div class="island-subtitle">@island.Subtitle</div>
+                                <p class="island-desc">@island.Description</p>
+
+                                <!-- Star Count Progress Bar -->
+                                <div class="island-star-footer">
+                                    <div class="island-star-badge">
+                                        <span class="footer-star-icon">⭐</span>
+                                        <span class="footer-star-text">@islandStars / @maxIslandStars</span>
+                                    </div>
+                                    <div class="island-stages-count">
+                                        <MudIcon Icon="@Icons.Material.Filled.Flag" Class="flag-icon" />
+                                        <span>@island.Stages.Count ด่าน</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </main>
+
+    <!-- Stage Selection Bottom Drawer Modal (MudDrawer / Tactile Sheet) -->
+    @if (_selectedIsland != null)
+    {
+        <div class="stage-sheet-backdrop" @onclick="CloseStageDrawer">
+            <div class="stage-sheet-container" @onclick:stopPropagation>
+                <!-- Drawer Header -->
+                <div class="sheet-header" style="border-bottom: 4px solid @(_selectedIsland.ThemeColor);">
+                    <div class="sheet-title-group">
+                        <span class="sheet-badge-icon">@_selectedIsland.BadgeIcon</span>
+                        <div>
+                            <h2 class="sheet-island-name">@_selectedIsland.Name</h2>
+                            <p class="sheet-island-sub">@_selectedIsland.Description</p>
+                        </div>
+                    </div>
+
+                    <button type="button"
+                            class="tactile-round-btn btn-close-sheet"
+                            @onclick="CloseStageDrawer"
+                            title="ปิด"
+                            aria-label="ปิด">
+                        <MudIcon Icon="@Icons.Material.Filled.Close" Class="top-btn-icon" />
+                    </button>
+                </div>
+
+                <!-- Stages Grid for Grade 1 Kids -->
+                <div class="stages-grid-scroll">
+                    <div class="stages-grid">
+                        @foreach (var stage in _selectedIsland.Stages)
+                        {
+                            var isStageUnlocked = _progress.IsStageUnlocked(stage.StageId);
+                            var stars = _progress.GetStageStars(stage.StageId);
+
+                            <div class="stage-card-col">
+                                <button type="button"
+                                        class="tactile-stage-btn @(isStageUnlocked ? "stage-unlocked" : "stage-locked")"
+                                        disabled="@(!isStageUnlocked)"
+                                        @onclick="() => LaunchStage(stage.StageId)"
+                                        aria-label="@stage.Title @(isStageUnlocked ? $"ผ่าน {stars} ดาว" : "ยังไม่ปลดล็อก")">
+                                    
+                                    <div class="stage-btn-top">
+                                        <div class="stage-number-badge" style="background: @(isStageUnlocked ? _selectedIsland.ThemeColor : "#78909c");">
+                                            <span>#@stage.StageId</span>
+                                        </div>
+                                        <div class="stage-mode-pill">
+                                            <span>@stage.GameMode</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="stage-btn-body">
+                                        <h4 class="stage-btn-title">@stage.Title</h4>
+                                        <div class="stage-focus-tag">
+                                            <span class="pinyin-char-highlight">@stage.FocusChars</span>
+                                        </div>
+                                        <p class="stage-btn-desc">@stage.Description</p>
+                                    </div>
+
+                                    <div class="stage-btn-footer">
+                                        @if (isStageUnlocked)
+                                        {
+                                            <div class="stars-row">
+                                                @for (int s = 1; s <= 3; s++)
+                                                {
+                                                    <span class="star-rating-icon @(s <= stars ? "star-gold" : "star-empty")">
+                                                        @(s <= stars ? "⭐" : "☆")
+                                                    </span>
+                                                }
+                                            </div>
+                                            <div class="play-action-text">
+                                                <span>@(stars > 0 ? "เล่นซ้ำ 🚀" : "ลุยเลย! 🎮")</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="stage-locked-state">
+                                                <MudIcon Icon="@Icons.Material.Filled.Lock" Class="stage-lock-icon" />
+                                                <span>ผ่านด่านก่อนหน้า</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    /* ==========================================================================
+       Island Map Page Design System (Pinyin Island 3D Claymorphism)
+       ========================================================================== */
+
+    .map-page-container {
+        position: relative;
+        min-height: 100vh;
+        width: 100vw;
+        overflow-x: hidden;
+        background: url('assets/images/bg-map-ocean.jpeg') no-repeat center center fixed;
+        background-size: cover;
+        display: flex;
+        flex-direction: column;
+        user-select: none;
+        -webkit-user-select: none;
+        font-family: 'Fredoka', 'Prompt', sans-serif;
+    }
+
+    /* Ambient animated ocean overlay for lively feeling */
+    .map-page-container::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.2) 0%, rgba(0, 119, 182, 0.4) 100%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* Top Navigation Bar */
+    .map-top-bar {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 24px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 4px solid #b3e5fc;
+        box-shadow: 0 8px 24px rgba(0, 78, 128, 0.15);
+    }
+
+    .top-bar-left, .top-bar-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .page-title-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #ffffff;
+        padding: 8px 18px;
+        border-radius: 999px;
+        border: 3px solid #81d4fa;
+        box-shadow: 0 4px 10px rgba(0, 136, 204, 0.15);
+    }
+
+    .badge-icon {
+        font-size: 1.5rem;
+    }
+
+    .badge-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #01579b;
+        letter-spacing: 0.5px;
+    }
+
+    /* Total Stars Chip */
+    .total-stars-chip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #FFF9C4 0%, #FFE082 100%);
+        border: 3px solid #FFA000;
+        border-radius: 999px;
+        padding: 6px 20px;
+        box-shadow: 0 6px 14px rgba(255, 160, 0, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .star-icon-anim {
+        font-size: 1.6rem;
+        animation: starSparkle 2.5s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    .star-count-num {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #E65100;
+    }
+
+    .star-max-label {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #F57C00;
+    }
+
+    /* Tactile 3D Round Buttons */
+    .tactile-round-btn {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+        outline: none;
+        position: relative;
+    }
+
+    .btn-back {
+        background: linear-gradient(180deg, #42A5F5 0%, #1E88E5 100%);
+        color: #ffffff;
+        box-shadow: 0 6px 0 #1565C0, 0 10px 16px rgba(21, 101, 192, 0.4);
+    }
+
+    .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 0 #1565C0, 0 12px 20px rgba(21, 101, 192, 0.5);
+    }
+
+    .btn-back:active {
+        transform: translateY(4px);
+        box-shadow: 0 2px 0 #1565C0, 0 4px 8px rgba(21, 101, 192, 0.3);
+    }
+
+    .btn-sound {
+        background: linear-gradient(180deg, #66BB6A 0%, #43A047 100%);
+        color: #ffffff;
+        box-shadow: 0 6px 0 #2E7D32, 0 10px 16px rgba(46, 125, 50, 0.4);
+    }
+
+    .btn-sound.muted {
+        background: linear-gradient(180deg, #B0BEC5 0%, #78909C 100%);
+        box-shadow: 0 6px 0 #455A64, 0 10px 16px rgba(69, 90, 100, 0.3);
+    }
+
+    .btn-sound:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-sound:active {
+        transform: translateY(4px);
+        box-shadow: 0 2px 0 #2E7D32, 0 4px 8px rgba(46, 125, 50, 0.3);
+    }
+
+    .top-btn-icon {
+        font-size: 1.7rem !important;
+    }
+
+    /* Main Viewport */
+    .map-viewport {
+        position: relative;
+        z-index: 5;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 24px 40px;
+    }
+
+    .map-instruction-pill {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.92);
+        padding: 10px 24px;
+        border-radius: 999px;
+        border: 3px solid #FFE082;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #0277BD;
+        margin-bottom: 24px;
+        animation: pillPulse 3s ease-in-out infinite;
+    }
+
+    /* Islands Track Horizontal Scroll / Grid */
+    .islands-track-container {
+        width: 100%;
+        max-width: 1360px;
+        overflow-x: auto;
+        padding: 16px 12px 32px;
+        scrollbar-width: thin;
+        scrollbar-color: #81D4FA transparent;
+    }
+
+    .islands-track-container::-webkit-scrollbar {
+        height: 10px;
+    }
+
+    .islands-track-container::-webkit-scrollbar-thumb {
+        background: #81D4FA;
+        border-radius: 999px;
+    }
+
+    .islands-track {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 32px;
+        min-width: min-content;
+        margin: 0 auto;
+    }
+
+    .island-card-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Connector Trail between islands */
+    .island-connector-trail {
+        position: absolute;
+        right: -32px;
+        width: 32px;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        z-index: 2;
+    }
+
+    .trail-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #B0BEC5;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .active-trail .trail-dot {
+        background: #FFD54F;
+        box-shadow: 0 0 8px #FFA000;
+        animation: dotGlow 1.8s infinite alternate;
+    }
+
+    /* Island Card 3D Claymorphism */
+    .island-card {
+        width: 270px;
+        background: #FFFFFF;
+        border-radius: 28px;
+        border: 4px solid #E0F2FE;
+        box-shadow: 0 14px 28px rgba(0, 60, 110, 0.22), 0 4px 0 #B3E5FC;
+        overflow: hidden;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+        position: relative;
+        outline: none;
+    }
+
+    .island-card.unlocked-island:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 22px 38px rgba(0, 60, 110, 0.3), 0 6px 0 #81D4FA;
+        border-color: #81D4FA;
+    }
+
+    .island-card.unlocked-island:active {
+        transform: translateY(2px) scale(0.98);
+        box-shadow: 0 6px 12px rgba(0, 60, 110, 0.2);
+    }
+
+    .island-card.locked-island {
+        cursor: not-allowed;
+        filter: grayscale(0.85) brightness(0.9);
+        opacity: 0.85;
+    }
+
+    .island-header-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px 12px;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 1.05rem;
+        box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+    }
+
+    .island-image-box {
+        position: relative;
+        width: 100%;
+        height: 175px;
+        overflow: hidden;
+        background: #E1F5FE;
+    }
+
+    .island-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .island-card.unlocked-island:hover .island-img {
+        transform: scale(1.08);
+    }
+
+    .island-lock-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(38, 50, 56, 0.72);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        backdrop-filter: blur(2px);
+    }
+
+    .lock-circle {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #ECEFF1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #37474F;
+        margin-bottom: 6px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .lock-svg {
+        font-size: 1.8rem !important;
+    }
+
+    .lock-text {
+        font-size: 1.1rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .lock-hint {
+        font-size: 0.8rem;
+        opacity: 0.85;
+    }
+
+    .island-tap-pulse {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.92);
+        color: #0277BD;
+        font-size: 0.85rem;
+        font-weight: 800;
+        padding: 4px 12px;
+        border-radius: 999px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        animation: tapPulse 1.8s infinite;
+    }
+
+    .island-content {
+        padding: 16px 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+    }
+
+    .island-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #263238;
+        margin: 0;
+    }
+
+    .island-subtitle {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #78909C;
+    }
+
+    .island-desc {
+        font-size: 0.9rem;
+        color: #455A64;
+        line-height: 1.35;
+        margin: 4px 0 10px;
+        min-height: 38px;
+    }
+
+    .island-star-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 2px dashed #ECEFF1;
+    }
+
+    .island-star-badge {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: #FFF8E1;
+        border: 2px solid #FFE082;
+        padding: 4px 10px;
+        border-radius: 999px;
+    }
+
+    .footer-star-icon {
+        font-size: 1rem;
+    }
+
+    .footer-star-text {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #FF8F00;
+    }
+
+    .island-stages-count {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #546E7A;
+    }
+
+    .flag-icon {
+        font-size: 1.1rem !important;
+        color: #1E88E5;
+    }
+
+    /* ==========================================================================
+       Stage Selection Drawer (Tactile Bottom Modal)
+       ========================================================================== */
+
+    .stage-sheet-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 20, 40, 0.65);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        z-index: 100;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        animation: fadeIn 0.25s ease-out;
+    }
+
+    .stage-sheet-container {
+        width: 100%;
+        max-width: 960px;
+        max-height: 85vh;
+        background: #FFFFFF;
+        border-top-left-radius: 36px;
+        border-top-right-radius: 36px;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        overflow: hidden;
+    }
+
+    .sheet-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 28px;
+        background: #F8FAFC;
+    }
+
+    .sheet-title-group {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .sheet-badge-icon {
+        font-size: 2.5rem;
+    }
+
+    .sheet-island-name {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #1E293B;
+        margin: 0;
+    }
+
+    .sheet-island-sub {
+        font-size: 0.95rem;
+        color: #64748B;
+        margin: 2px 0 0;
+    }
+
+    .btn-close-sheet {
+        background: #F1F5F9;
+        color: #64748B;
+        box-shadow: 0 4px 0 #CBD5E1;
+    }
+
+    .btn-close-sheet:hover {
+        background: #E2E8F0;
+        color: #334155;
+    }
+
+    .btn-close-sheet:active {
+        transform: translateY(3px);
+        box-shadow: 0 1px 0 #CBD5E1;
+    }
+
+    /* Stages Grid */
+    .stages-grid-scroll {
+        padding: 24px 28px 40px;
+        overflow-y: auto;
+        max-height: calc(85vh - 110px);
+    }
+
+    .stages-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .stage-card-col {
+        display: flex;
+    }
+
+    /* Tactile Big Stage Button */
+    .tactile-stage-btn {
+        width: 100%;
+        background: #FFFFFF;
+        border-radius: 24px;
+        border: 3px solid #E2E8F0;
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 12px;
+        cursor: pointer;
+        text-align: left;
+        position: relative;
+        transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+        outline: none;
+    }
+
+    .tactile-stage-btn.stage-unlocked {
+        background: #FFFFFF;
+        box-shadow: 0 8px 0 #E2E8F0, 0 12px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .tactile-stage-btn.stage-unlocked:hover {
+        transform: translateY(-6px);
+        border-color: #38BDF8;
+        box-shadow: 0 14px 0 #BAE6FD, 0 18px 28px rgba(56, 189, 248, 0.25);
+    }
+
+    .tactile-stage-btn.stage-unlocked:active {
+        transform: translateY(4px);
+        box-shadow: 0 2px 0 #BAE6FD, 0 4px 8px rgba(56, 189, 248, 0.15);
+    }
+
+    .tactile-stage-btn.stage-locked {
+        background: #F8FAFC;
+        border-color: #E2E8F0;
+        opacity: 0.65;
+        cursor: not-allowed;
+        box-shadow: 0 4px 0 #E2E8F0;
+    }
+
+    .stage-btn-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stage-number-badge {
+        padding: 4px 12px;
+        border-radius: 999px;
+        color: #FFFFFF;
+        font-weight: 800;
+        font-size: 0.95rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .stage-mode-pill {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #0284C7;
+        background: #E0F2FE;
+        padding: 4px 10px;
+        border-radius: 999px;
+    }
+
+    .stage-btn-body {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .stage-btn-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #1E293B;
+        margin: 0;
+    }
+
+    .stage-focus-tag {
+        display: inline-block;
+    }
+
+    .pinyin-char-highlight {
+        background: #FEF3C7;
+        color: #D97706;
+        border: 2px solid #FDE68A;
+        font-size: 1.1rem;
+        font-weight: 800;
+        padding: 2px 10px;
+        border-radius: 12px;
+    }
+
+    .stage-btn-desc {
+        font-size: 0.85rem;
+        color: #64748B;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .stage-btn-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 2px dashed #F1F5F9;
+    }
+
+    .stars-row {
+        display: flex;
+        gap: 4px;
+    }
+
+    .star-rating-icon {
+        font-size: 1.35rem;
+    }
+
+    .star-gold {
+        filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.4));
+    }
+
+    .star-empty {
+        color: #CBD5E1;
+    }
+
+    .play-action-text {
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: #0284C7;
+    }
+
+    .stage-locked-state {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #94A3B8;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    .stage-lock-icon {
+        font-size: 1.1rem !important;
+    }
+
+    /* ==========================================================================
+       Animations (60fps Optimized with translate3d)
+       ========================================================================== */
+
+    @@keyframes bounceCardAnim {
+        0%, 100% {
+            transform: translate3d(0, 0, 0);
+        }
+        50% {
+            transform: translate3d(0, -8px, 0);
+        }
+    }
+
+    @@keyframes starSparkle {
+        0%, 100% {
+            transform: scale(1) rotate(0deg);
+        }
+        50% {
+            transform: scale(1.25) rotate(15deg);
+        }
+    }
+
+    @@keyframes pillPulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.02);
+        }
+    }
+
+    @@keyframes tapPulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 0.9;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes dotGlow {
+        from {
+            transform: scale(0.9);
+            opacity: 0.7;
+        }
+        to {
+            transform: scale(1.3);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @@keyframes slideUp {
+        from { transform: translate3d(0, 100%, 0); }
+        to { transform: translate3d(0, 0, 0); }
+    }
+
+    .bounce-card {
+        animation: bounceCardAnim 4s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Stagger bounce animation for islands */
+    .island-card-wrapper:nth-child(1) .bounce-card { animation-delay: 0s; }
+    .island-card-wrapper:nth-child(2) .bounce-card { animation-delay: 0.6s; }
+    .island-card-wrapper:nth-child(3) .bounce-card { animation-delay: 1.2s; }
+    .island-card-wrapper:nth-child(4) .bounce-card { animation-delay: 1.8s; }
+
+    /* ==========================================================================
+       Responsive Breakpoints (Grade 1 Kids & Tablets)
+       ========================================================================== */
+
+    @@media (max-width: 900px) {
+        .map-top-bar {
+            padding: 12px 16px;
+        }
+
+        .badge-title {
+            font-size: 1.05rem;
+        }
+
+        .total-stars-chip {
+            padding: 4px 14px;
+        }
+
+        .star-count-num {
+            font-size: 1.2rem;
+        }
+
+        .islands-track {
+            gap: 20px;
+        }
+
+        .island-card {
+            width: 240px;
+        }
+
+        .island-image-box {
+            height: 150px;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .page-title-badge {
+            display: none;
+        }
+
+        .map-instruction-pill {
+            font-size: 0.95rem;
+            padding: 8px 16px;
+            text-align: center;
+        }
+
+        .island-connector-trail {
+            display: none;
+        }
+
+        .islands-track {
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .island-card {
+            width: 290px;
+        }
+
+        .stage-sheet-container {
+            max-height: 90vh;
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+        }
+
+        .sheet-header {
+            padding: 16px 20px;
+        }
+
+        .sheet-island-name {
+            font-size: 1.3rem;
+        }
+
+        .stages-grid-scroll {
+            padding: 16px 20px 30px;
+        }
+
+        .stages-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+@code {
+    private UserProgress _progress = new();
+    private List<IslandInfo> _islands = new();
+    private IslandInfo? _selectedIsland;
+    private bool _isMuted = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _islands = ProgressService.GetAllIslands();
+        _progress = await ProgressService.GetProgressAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                // Play Map BGM automatically (looping with kid-friendly volume)
+                await JS.InvokeVoidAsync("gameAudio.playBgm", "assets/audio/bgm-map.mp3", 0.4);
+                await JS.InvokeVoidAsync("gameAudio.setBgmMuted", _isMuted);
+            }
+            catch
+            {
+                // Ignored if runtime not ready yet
+            }
+        }
+    }
+
+    private async Task GoBackHome()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.pauseBgm");
+        }
+        catch { }
+        Nav.NavigateTo("/");
+    }
+
+    private int CalculateIslandStars(IslandInfo island)
+    {
+        return island.Stages.Sum(s => _progress.GetStageStars(s.StageId));
+    }
+
+    private void SelectIsland(IslandInfo island)
+    {
+        if (!_progress.IsIslandUnlocked(island.Id))
+        {
+            Snackbar.Add($"เกาะนี้ยังไม่ปลดล็อก! สะสมดาวจากเกาะก่อนหน้าเพื่อเปิดทาง ✨", Severity.Warning, config =>
+            {
+                config.VisibleStateDuration = 2500;
+                config.ShowCloseIcon = false;
+            });
+            return;
+        }
+
+        _selectedIsland = island;
+    }
+
+    private void CloseStageDrawer()
+    {
+        _selectedIsland = null;
+    }
+
+    private async Task LaunchStage(int stageId)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.pauseBgm");
+        }
+        catch { }
+        Nav.NavigateTo($"/play/{stageId}");
+    }
+
+    private async Task ToggleSound()
+    {
+        _isMuted = !_isMuted;
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.setBgmMuted", _isMuted);
+        }
+        catch
+        {
+            // Silently ignore
+        }
+
+        var message = _isMuted ? "ปิดเสียงเรียบร้อย 🔇" : "เปิดเสียงแล้ว! 🎵";
+        Snackbar.Add(message, Severity.Info, config =>
+        {
+            config.VisibleStateDuration = 1800;
+            config.ShowCloseIcon = false;
+        });
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.pauseBgm");
+        }
+        catch
+        {
+            // Ignore on unmount if JS runtime is disconnected
+        }
+    }
+}
+
+

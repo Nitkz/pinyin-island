@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add MudBlazor services
 builder.Services.AddMudServices();
+builder.Services.AddScoped<PinyinIsland.Client.Services.IProgressService, PinyinIsland.Client.Services.ProgressService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

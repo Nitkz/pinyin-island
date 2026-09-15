@@ -3,6 +3,7 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inject IJSRuntime JS
+@inject IProgressService ProgressService
 
 <PageTitle>เกาะมหาสมบัติพินอิน - Pinyin Island</PageTitle>
 
@@ -680,6 +681,9 @@
         {
             try
             {
+                // Ensure map BGM stops on home page
+                await JS.InvokeVoidAsync("gameAudio.pauseBgm");
+
                 // Ensure video autoplays smoothly across all browsers
                 await JS.InvokeVoidAsync("gameAudio.playVideo", "mascotVideo");
                 await JS.InvokeVoidAsync("gameAudio.setVideoMuted", "mascotVideo", _isMuted);
@@ -723,13 +727,14 @@
         _mathAnswer = string.Empty;
     }
 
-    private void ConfirmReset()
+    private async Task ConfirmReset()
     {
         // Simple security gate for parents / teachers (3 + 4 = 7)
         if (_mathAnswer.Trim() == "7")
         {
+            await ProgressService.ResetProgressAsync();
             _resetDialogVisible = false;
-            Snackbar.Add("รีเซ็ตความก้าวหน้าสำเร็จ เริ่มต้นการผจญภัยใหม่! ✨", Severity.Success);
+            Snackbar.Add("รีเซ็ตความก้าวหน้าสำเร็จ เริ่มต้นการผจญภัยใหม่! ✨ (0 ดาว)", Severity.Success);
         }
         else
         {
@@ -737,3 +742,4 @@
         }
     }
 }
+
