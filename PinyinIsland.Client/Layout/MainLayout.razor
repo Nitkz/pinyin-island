@@ -1,0 +1,62 @@
+@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="@_gameTheme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout Class="game-layout">
+    <MudMainContent Class="pa-0 game-main-content">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+<div id="blazor-error-ui" data-nosnippet>
+    เกิดข้อผิดพลาดขึ้น กรุณารีโหลดหน้าเว็บ
+    <a href="." class="reload">รีโหลด</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+        user-select: none;
+        -webkit-user-select: none;
+        font-family: 'Prompt', 'Kanit', sans-serif;
+    }
+
+    .game-layout {
+        min-height: 100vh;
+        width: 100%;
+        background: linear-gradient(180deg, #E0F7FA 0%, #80DEEA 50%, #B2EBF2 100%);
+    }
+
+    .game-main-content {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+
+@code {
+    private readonly MudTheme _gameTheme = new()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = "#FF9800",      // สีส้มสดใส เหมาะกับเกมเด็ก
+            Secondary = "#4CAF50",    // สีเขียวธรรมชาติ
+            Tertiary = "#29B6F6",     // สีฟ้าสดใส
+            Background = "#E0F7FA",
+            AppbarBackground = "#FFFFFF00", // Hex พร้อม alpha 00 สำหรับโปร่งใส
+            TextPrimary = "#37474F",
+            Success = "#4CAF50",
+            Warning = "#FFA000",
+            Error = "#F44336",
+            Info = "#29B6F6"
+        }
+    };
+}

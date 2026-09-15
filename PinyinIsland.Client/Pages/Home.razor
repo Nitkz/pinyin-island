@@ -1,0 +1,169 @@
+@page "/"
+@inject NavigationManager Navigation
+
+<PageTitle>Pinyin Island - เกาะมหาสมบัติพินอิน</PageTitle>
+
+<div class="home-screen">
+    <!-- Floating Island Decoration / Header -->
+    <div class="header-banner">
+        <div class="title-badge">
+            <span class="badge-icon">🏝️</span>
+            <h1 class="game-title">เกาะมหาสมบัติพินอิน</h1>
+            <p class="game-subtitle">Pinyin Island Adventure</p>
+        </div>
+    </div>
+
+    <!-- Island Character / Illustration Area -->
+    <div class="mascot-container">
+        <div class="island-card">
+            <div class="island-illustration">
+                ⛵ 🌴 🦜 🏝️
+            </div>
+            <p class="island-tagline">มาผจญภัยเรียนรู้พินอิน 4 แดนดิน สะสมดาวกันเถอะ!</p>
+        </div>
+    </div>
+
+    <!-- Main Action Button -->
+    <div class="action-container">
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Size="Size.Large"
+                   Class="start-game-btn"
+                   OnClick="StartAdventure">
+            <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Size="Size.Large" Class="mr-2" />
+            <span class="btn-text">เริ่มผจญภัย</span>
+        </MudButton>
+    </div>
+</div>
+
+<style>
+    .home-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 100vh;
+        padding: 2.5rem 1.5rem;
+        box-sizing: border-box;
+        text-align: center;
+        background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.7) 0%, rgba(224, 247, 250, 0.2) 80%);
+    }
+
+    .header-banner {
+        animation: floatDown 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .title-badge {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        padding: 1.5rem 2.5rem;
+        border-radius: 28px;
+        box-shadow: 0 12px 30px rgba(0, 150, 136, 0.15);
+        border: 3px solid #FFF9C4;
+    }
+
+    .badge-icon {
+        font-size: 3.5rem;
+        display: inline-block;
+        animation: bounce 2s infinite ease-in-out;
+    }
+
+    .game-title {
+        font-size: 2.4rem;
+        font-weight: 800;
+        margin: 0.5rem 0 0.2rem 0;
+        color: #E65100;
+        text-shadow: 2px 2px 0px #FFE082;
+        letter-spacing: 0.5px;
+    }
+
+    .game-subtitle {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #00897B;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .mascot-container {
+        margin: 1.5rem 0;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .island-card {
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 24px;
+        padding: 2rem 1.5rem;
+        border: 2px dashed #80DEEA;
+    }
+
+    .island-illustration {
+        font-size: 4rem;
+        letter-spacing: 0.8rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .island-tagline {
+        font-size: 1.15rem;
+        color: #455A64;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .action-container {
+        margin-bottom: 1rem;
+        width: 100%;
+        max-width: 380px;
+    }
+
+    .start-game-btn {
+        width: 100%;
+        height: 76px !important;
+        border-radius: 40px !important;
+        background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%) !important;
+        color: white !important;
+        box-shadow: 0 10px 25px rgba(245, 124, 0, 0.4) !important;
+        border: 3px solid #FFE082 !important;
+        transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    }
+
+    .start-game-btn:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 14px 30px rgba(245, 124, 0, 0.5) !important;
+    }
+
+    .start-game-btn:active {
+        transform: translateY(2px) scale(0.98);
+    }
+
+    .btn-text {
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    @@keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    @@keyframes floatDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+@code {
+    private void StartAdventure()
+    {
+        // นำทางไปยังหน้าเลือกด่าน (IslandMap) ในอนาคต
+        Navigation.NavigateTo("/map");
+    }
+}
