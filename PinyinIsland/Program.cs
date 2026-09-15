@@ -1,12 +1,15 @@
 using MudBlazor.Services;
 using PinyinIsland.Client.Pages;
+using PinyinIsland.Client.Services;
 using PinyinIsland.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add MudBlazor services
 builder.Services.AddMudServices();
-builder.Services.AddScoped<PinyinIsland.Client.Services.IProgressService, PinyinIsland.Client.Services.ProgressService>();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IProgressService, ProgressService>();
+builder.Services.AddScoped<IStageDataService, StageDataService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

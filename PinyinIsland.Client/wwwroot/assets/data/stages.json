@@ -1,0 +1,798 @@
+{
+  "stages": [
+    {
+      "id": 1,
+      "island_id": 1,
+      "title": "ด่าน 1: ริมหาดผลไม้",
+      "focus_chars": "b, p, m, f",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 1,
+          "type": "sequence",
+          "prompt_text": "เรียงลำดับพยัญชนะริมฝีปาก",
+          "items": ["b", "p", "m", "f"],
+          "correct_order": ["b", "p", "m", "f"]
+        },
+        {
+          "id": 2,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/b.mp3",
+          "thai_sound": "ปัว",
+          "target_char": "b",
+          "options": ["b", "p", "m"],
+          "answer": "b",
+          "variants": [
+            { "options": ["b", "d", "p"], "answer": "b" },
+            { "options": ["m", "b", "f"], "answer": "b" }
+          ]
+        },
+        {
+          "id": 3,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/p.mp3",
+          "thai_sound": "พัว",
+          "target_char": "p",
+          "options": ["b", "p", "f"],
+          "answer": "p",
+          "variants": [
+            { "options": ["p", "b", "t"], "answer": "p" },
+            { "options": ["m", "f", "p"], "answer": "p" }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/m.mp3",
+          "thai_sound": "มัว",
+          "target_char": "m",
+          "options": ["m", "n", "f"],
+          "answer": "m",
+          "variants": [
+            { "options": ["b", "m", "p"], "answer": "m" },
+            { "options": ["m", "f", "l"], "answer": "m" }
+          ]
+        },
+        {
+          "id": 5,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/f.mp3",
+          "thai_sound": "ฟัว",
+          "target_char": "f",
+          "options": ["p", "f", "h"],
+          "answer": "f",
+          "variants": [
+            { "options": ["f", "b", "m"], "answer": "f" },
+            { "options": ["t", "f", "p"], "answer": "f" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "island_id": 1,
+      "title": "ด่าน 2: ดงกล้วยหรรษา",
+      "focus_chars": "d, t, n, l",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 6,
+          "type": "sequence",
+          "prompt_text": "เรียงลำดับพยัญชนะปลายลิ้น",
+          "items": ["d", "t", "n", "l"],
+          "correct_order": ["d", "t", "n", "l"]
+        },
+        {
+          "id": 7,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/d.mp3",
+          "thai_sound": "เตอ",
+          "target_char": "d",
+          "options": ["d", "t", "b"],
+          "answer": "d",
+          "variants": [
+            { "options": ["b", "d", "p"], "answer": "d" },
+            { "options": ["t", "n", "d"], "answer": "d" }
+          ]
+        },
+        {
+          "id": 8,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/t.mp3",
+          "thai_sound": "เธอ",
+          "target_char": "t",
+          "options": ["d", "t", "l"],
+          "answer": "t",
+          "variants": [
+            { "options": ["t", "f", "d"], "answer": "t" },
+            { "options": ["k", "t", "p"], "answer": "t" }
+          ]
+        },
+        {
+          "id": 9,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/n.mp3",
+          "thai_sound": "เนอ",
+          "target_char": "n",
+          "options": ["n", "l", "m"],
+          "answer": "n",
+          "variants": [
+            { "options": ["l", "n", "r"], "answer": "n" },
+            { "options": ["m", "n", "d"], "answer": "n" }
+          ]
+        },
+        {
+          "id": 10,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/l.mp3",
+          "thai_sound": "เลอ",
+          "target_char": "l",
+          "options": ["l", "n", "r"],
+          "answer": "l",
+          "variants": [
+            { "options": ["i", "l", "t"], "answer": "l" },
+            { "options": ["d", "l", "n"], "answer": "l" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "island_id": 1,
+      "title": "ด่าน 3: สะพานส้มซ่า",
+      "focus_chars": "g, k, h",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 11,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/g.mp3",
+          "thai_sound": "เกอ",
+          "target_char": "g",
+          "options": ["g", "k", "h"],
+          "answer": "g",
+          "variants": [
+            { "options": ["k", "g", "d"], "answer": "g" },
+            { "options": ["g", "q", "j"], "answer": "g" }
+          ]
+        },
+        {
+          "id": 12,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/k.mp3",
+          "thai_sound": "เคอ",
+          "target_char": "k",
+          "options": ["g", "k", "h"],
+          "answer": "k",
+          "variants": [
+            { "options": ["h", "k", "g"], "answer": "k" },
+            { "options": ["k", "t", "p"], "answer": "k" }
+          ]
+        },
+        {
+          "id": 13,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/h.mp3",
+          "thai_sound": "เฮอ",
+          "target_char": "h",
+          "options": ["k", "h", "f"],
+          "answer": "h",
+          "variants": [
+            { "options": ["g", "h", "k"], "answer": "h" },
+            { "options": ["h", "n", "m"], "answer": "h" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "island_id": 2,
+      "title": "ด่าน 4: น้ำตกลิ้นเรียบ",
+      "focus_chars": "j, q, x",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 14,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/j.mp3",
+          "thai_sound": "จี",
+          "target_char": "j",
+          "options": ["j", "q", "x"],
+          "answer": "j",
+          "variants": [
+            { "options": ["q", "j", "z"], "answer": "j" },
+            { "options": ["j", "g", "i"], "answer": "j" }
+          ]
+        },
+        {
+          "id": 15,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/q.mp3",
+          "thai_sound": "ชี",
+          "target_char": "q",
+          "options": ["j", "q", "x"],
+          "answer": "q",
+          "variants": [
+            { "options": ["p", "q", "d"], "answer": "q" },
+            { "options": ["x", "q", "ch"], "answer": "q" }
+          ]
+        },
+        {
+          "id": 16,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/x.mp3",
+          "thai_sound": "ซี",
+          "target_char": "x",
+          "options": ["s", "x", "sh"],
+          "answer": "x",
+          "variants": [
+            { "options": ["x", "q", "j"], "answer": "x" },
+            { "options": ["c", "x", "s"], "answer": "x" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "island_id": 2,
+      "title": "ด่าน 5: ยอดเขาม้วนลิ้น",
+      "focus_chars": "zh, ch, sh, r",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 17,
+          "type": "sequence",
+          "prompt_text": "เรียงลำดับพยัญชนะม้วนลิ้น",
+          "items": ["zh", "ch", "sh", "r"],
+          "correct_order": ["zh", "ch", "sh", "r"]
+        },
+        {
+          "id": 18,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/zh.mp3",
+          "thai_sound": "จรือ",
+          "target_char": "zh",
+          "options": ["z", "zh", "ch"],
+          "answer": "zh",
+          "variants": [
+            { "options": ["zh", "sh", "z"], "answer": "zh" },
+            { "options": ["j", "zh", "ch"], "answer": "zh" }
+          ]
+        },
+        {
+          "id": 19,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/ch.mp3",
+          "thai_sound": "ชรือ",
+          "target_char": "ch",
+          "options": ["c", "ch", "sh"],
+          "answer": "ch",
+          "variants": [
+            { "options": ["q", "ch", "zh"], "answer": "ch" },
+            { "options": ["ch", "c", "x"], "answer": "ch" }
+          ]
+        },
+        {
+          "id": 20,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/sh.mp3",
+          "thai_sound": "ซรือ",
+          "target_char": "sh",
+          "options": ["s", "sh", "x"],
+          "answer": "sh",
+          "variants": [
+            { "options": ["sh", "ch", "s"], "answer": "sh" },
+            { "options": ["r", "sh", "x"], "answer": "sh" }
+          ]
+        },
+        {
+          "id": 21,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/r.mp3",
+          "thai_sound": "ยรือ",
+          "target_char": "r",
+          "options": ["l", "r", "sh"],
+          "answer": "r",
+          "variants": [
+            { "options": ["r", "z", "zh"], "answer": "r" },
+            { "options": ["y", "r", "l"], "answer": "r" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "island_id": 2,
+      "title": "ด่าน 6: ลานหินฟันสู้ฟัน",
+      "focus_chars": "z, c, s",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 22,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/z.mp3",
+          "thai_sound": "จือ",
+          "target_char": "z",
+          "options": ["z", "c", "s"],
+          "answer": "z",
+          "variants": [
+            { "options": ["zh", "z", "j"], "answer": "z" },
+            { "options": ["z", "s", "c"], "answer": "z" }
+          ]
+        },
+        {
+          "id": 23,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/c.mp3",
+          "thai_sound": "ชือ",
+          "target_char": "c",
+          "options": ["z", "c", "s"],
+          "answer": "c",
+          "variants": [
+            { "options": ["ch", "c", "q"], "answer": "c" },
+            { "options": ["c", "s", "z"], "answer": "c" }
+          ]
+        },
+        {
+          "id": 24,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/s.mp3",
+          "thai_sound": "ซือ",
+          "target_char": "s",
+          "options": ["s", "x", "sh"],
+          "answer": "s",
+          "variants": [
+            { "options": ["z", "c", "s"], "answer": "s" },
+            { "options": ["s", "sh", "c"], "answer": "s" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "island_id": 2,
+      "title": "ด่าน 7: ซุ้มประตูคู่หู",
+      "focus_chars": "y, w",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 25,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/y.mp3",
+          "thai_sound": "อี / ยา",
+          "target_char": "y",
+          "options": ["y", "w", "i"],
+          "answer": "y",
+          "variants": [
+            { "options": ["r", "y", "w"], "answer": "y" },
+            { "options": ["y", "v", "u"], "answer": "y" }
+          ]
+        },
+        {
+          "id": 26,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/initials/w.mp3",
+          "thai_sound": "อู / วา",
+          "target_char": "w",
+          "options": ["w", "y", "u"],
+          "answer": "w",
+          "variants": [
+            { "options": ["m", "w", "v"], "answer": "w" },
+            { "options": ["w", "f", "y"], "answer": "w" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "island_id": 3,
+      "title": "ด่าน 8: ปากกว้างร้องอ้า",
+      "focus_chars": "a, o, e",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 27,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/a.mp3",
+          "thai_sound": "อา",
+          "target_char": "a",
+          "options": ["a", "o", "e"],
+          "answer": "a",
+          "variants": [
+            { "options": ["e", "a", "u"], "answer": "a" },
+            { "options": ["a", "ai", "an"], "answer": "a" }
+          ]
+        },
+        {
+          "id": 28,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/o.mp3",
+          "thai_sound": "โอ",
+          "target_char": "o",
+          "options": ["o", "e", "u"],
+          "answer": "o",
+          "variants": [
+            { "options": ["a", "o", "ou"], "answer": "o" },
+            { "options": ["e", "o", "a"], "answer": "o" }
+          ]
+        },
+        {
+          "id": 29,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/e.mp3",
+          "thai_sound": "เออ",
+          "target_char": "e",
+          "options": ["a", "o", "e"],
+          "answer": "e",
+          "variants": [
+            { "options": ["ei", "e", "er"], "answer": "e" },
+            { "options": ["e", "u", "o"], "answer": "e" }
+          ]
+        },
+        {
+          "id": 30,
+          "type": "listen_pick",
+          "display_text": "a",
+          "prompt_audio": "assets/audio/finals/a.mp3",
+          "thai_sound": "อา",
+          "target_char": "a",
+          "options": [
+            { "text": "อา", "audio": "assets/audio/finals/a.mp3" },
+            { "text": "เออ", "audio": "assets/audio/finals/e.mp3" },
+            { "text": "อี", "audio": "assets/audio/finals/i.mp3" }
+          ],
+          "answer": "อา"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "island_id": 3,
+      "title": "ด่าน 9: บึงน้ำตาโต",
+      "focus_chars": "i, u, ü",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 31,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/i.mp3",
+          "thai_sound": "อี",
+          "target_char": "i",
+          "options": ["i", "u", "ü"],
+          "answer": "i",
+          "variants": [
+            { "options": ["e", "i", "y"], "answer": "i" },
+            { "options": ["i", "l", "u"], "answer": "i" }
+          ]
+        },
+        {
+          "id": 32,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/u.mp3",
+          "thai_sound": "อู",
+          "target_char": "u",
+          "options": ["u", "ü", "o"],
+          "answer": "u",
+          "variants": [
+            { "options": ["o", "u", "w"], "answer": "u" },
+            { "options": ["ü", "u", "i"], "answer": "u" }
+          ]
+        },
+        {
+          "id": 33,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/v.mp3",
+          "thai_sound": "อวี (ปากจู๋)",
+          "target_char": "ü",
+          "options": ["u", "ü", "i"],
+          "answer": "ü",
+          "variants": [
+            { "options": ["ü", "u", "e"], "answer": "ü" },
+            { "options": ["i", "ü", "o"], "answer": "ü" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "island_id": 3,
+      "title": "ด่าน 10: รวมพลัง 6 สระเดี่ยว",
+      "focus_chars": "a, o, e, i, u, ü",
+      "game_mode": "sequence",
+      "questions": [
+        {
+          "id": 34,
+          "type": "sequence",
+          "prompt_text": "เรียงลำดับ 6 สระเดี่ยว",
+          "items": ["a", "o", "e", "i", "u", "ü"],
+          "correct_order": ["a", "o", "e", "i", "u", "ü"]
+        },
+        {
+          "id": 35,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/o.mp3",
+          "thai_sound": "โอ",
+          "target_char": "o",
+          "options": ["o", "e", "a"],
+          "answer": "o",
+          "variants": [
+            { "options": ["a", "o", "u"], "answer": "o" },
+            { "options": ["e", "o", "ü"], "answer": "o" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "island_id": 4,
+      "title": "ด่าน 11: ห้องโถงอัญมณีคู่",
+      "focus_chars": "ai, ei, ui, ao",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 36,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/ai.mp3",
+          "thai_sound": "ไอ",
+          "target_char": "ai",
+          "options": ["ai", "ei", "ui"],
+          "answer": "ai",
+          "variants": [
+            { "options": ["ao", "ai", "an"], "answer": "ai" },
+            { "options": ["ei", "ai", "ia"], "answer": "ai" }
+          ]
+        },
+        {
+          "id": 37,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/ei.mp3",
+          "thai_sound": "เอย",
+          "target_char": "ei",
+          "options": ["ai", "ei", "ui"],
+          "answer": "ei",
+          "variants": [
+            { "options": ["ei", "ie", "en"], "answer": "ei" },
+            { "options": ["ui", "ei", "er"], "answer": "ei" }
+          ]
+        },
+        {
+          "id": 38,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/ui.mp3",
+          "thai_sound": "อุย / เวย",
+          "target_char": "ui",
+          "options": ["ui", "iu", "ou"],
+          "answer": "ui",
+          "variants": [
+            { "options": ["ei", "ui", "ai"], "answer": "ui" },
+            { "options": ["ui", "un", "ue"], "answer": "ui" }
+          ]
+        },
+        {
+          "id": 39,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/ao.mp3",
+          "thai_sound": "เอา",
+          "target_char": "ao",
+          "options": ["ao", "ou", "an"],
+          "answer": "ao",
+          "variants": [
+            { "options": ["ou", "ao", "ai"], "answer": "ao" },
+            { "options": ["ao", "ang", "au"], "answer": "ao" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "island_id": 4,
+      "title": "ด่าน 12: ทางลับลาวา",
+      "focus_chars": "ou, iu, ie, ue, er",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 40,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/ou.mp3",
+          "thai_sound": "โอว",
+          "target_char": "ou",
+          "options": ["ou", "ao", "iu"],
+          "answer": "ou",
+          "variants": [
+            { "options": ["uo", "ou", "o"], "answer": "ou" },
+            { "options": ["ou", "ong", "u"], "answer": "ou" }
+          ]
+        },
+        {
+          "id": 41,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/iu.mp3",
+          "thai_sound": "อิว",
+          "target_char": "iu",
+          "options": ["ui", "iu", "ie"],
+          "answer": "iu",
+          "variants": [
+            { "options": ["iu", "in", "ing"], "answer": "iu" },
+            { "options": ["ou", "iu", "ui"], "answer": "iu" }
+          ]
+        },
+        {
+          "id": 42,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/ie.mp3",
+          "thai_sound": "เอีย",
+          "target_char": "ie",
+          "options": ["ie", "ei", "iu"],
+          "answer": "ie",
+          "variants": [
+            { "options": ["ue", "ie", "er"], "answer": "ie" },
+            { "options": ["ie", "in", "i"], "answer": "ie" }
+          ]
+        },
+        {
+          "id": 43,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/ue.mp3",
+          "thai_sound": "เอวีย",
+          "target_char": "üe",
+          "options": ["ie", "üe", "ui"],
+          "answer": "üe",
+          "variants": [
+            { "options": ["üe", "un", "vn"], "answer": "üe" },
+            { "options": ["ue", "üe", "ou"], "answer": "üe" }
+          ]
+        },
+        {
+          "id": 44,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/er.mp3",
+          "thai_sound": "เออร์ (ม้วนลิ้น)",
+          "target_char": "er",
+          "options": ["e", "er", "ei"],
+          "answer": "er",
+          "variants": [
+            { "options": ["r", "er", "en"], "answer": "er" },
+            { "options": ["er", "ar", "or"], "answer": "er" }
+          ]
+        },
+        {
+          "id": 45,
+          "type": "listen_pick",
+          "display_text": "ei",
+          "prompt_audio": "assets/audio/finals/ei.mp3",
+          "thai_sound": "เอย",
+          "target_char": "ei",
+          "options": [
+            { "text": "เอย", "audio": "assets/audio/finals/ei.mp3" },
+            { "text": "ไอ", "audio": "assets/audio/finals/ai.mp3" },
+            { "text": "เวย", "audio": "assets/audio/finals/ui.mp3" }
+          ],
+          "answer": "เอย"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "island_id": 4,
+      "title": "ด่าน 13: เสียงขึ้นจมูก",
+      "focus_chars": "an, en, in, un, vn",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 46,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/an.mp3",
+          "thai_sound": "อัน",
+          "target_char": "an",
+          "options": ["an", "en", "ang"],
+          "answer": "an",
+          "variants": [
+            { "options": ["ai", "an", "ao"], "answer": "an" },
+            { "options": ["an", "in", "un"], "answer": "an" }
+          ]
+        },
+        {
+          "id": 47,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/en.mp3",
+          "thai_sound": "เอิน",
+          "target_char": "en",
+          "options": ["en", "eng", "er"],
+          "answer": "en",
+          "variants": [
+            { "options": ["an", "en", "in"], "answer": "en" },
+            { "options": ["en", "ei", "ong"], "answer": "en" }
+          ]
+        },
+        {
+          "id": 48,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/in.mp3",
+          "thai_sound": "อิน",
+          "target_char": "in",
+          "options": ["in", "ing", "un"],
+          "answer": "in",
+          "variants": [
+            { "options": ["en", "in", "iu"], "answer": "in" },
+            { "options": ["in", "i", "an"], "answer": "in" }
+          ]
+        },
+        {
+          "id": 49,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/un.mp3",
+          "thai_sound": "อุน / เวน",
+          "target_char": "un",
+          "options": ["un", "ün", "ui"],
+          "answer": "un",
+          "variants": [
+            { "options": ["in", "un", "en"], "answer": "un" },
+            { "options": ["un", "u", "ou"], "answer": "un" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "island_id": 4,
+      "title": "ด่าน 14: ขุมทรัพย์ราชาพินอิน",
+      "focus_chars": "ang, eng, ing, ong",
+      "game_mode": "listen_pick",
+      "questions": [
+        {
+          "id": 50,
+          "type": "listen_pick",
+          "display_text": "ang",
+          "prompt_audio": "assets/audio/finals/ang.mp3",
+          "thai_sound": "อัง",
+          "target_char": "ang",
+          "options": [
+            { "text": "อัง", "audio": "assets/audio/finals/ang.mp3" },
+            { "text": "อง", "audio": "assets/audio/finals/ong.mp3" },
+            { "text": "อิง", "audio": "assets/audio/finals/ing.mp3" }
+          ],
+          "answer": "อัง"
+        },
+        {
+          "id": 51,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/eng.mp3",
+          "thai_sound": "เอิง",
+          "target_char": "eng",
+          "options": ["eng", "en", "ong"],
+          "answer": "eng",
+          "variants": [
+            { "options": ["ang", "eng", "ing"], "answer": "eng" },
+            { "options": ["eng", "er", "ei"], "answer": "eng" }
+          ]
+        },
+        {
+          "id": 52,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/ing.mp3",
+          "thai_sound": "อิง",
+          "target_char": "ing",
+          "options": ["ing", "in", "eng"],
+          "answer": "ing",
+          "variants": [
+            { "options": ["ing", "iu", "ang"], "answer": "ing" },
+            { "options": ["in", "ing", "ong"], "answer": "ing" }
+          ]
+        },
+        {
+          "id": 53,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/ong.mp3",
+          "thai_sound": "โอง / อุง",
+          "target_char": "ong",
+          "options": ["ong", "ou", "eng"],
+          "answer": "ong",
+          "variants": [
+            { "options": ["ang", "ong", "un"], "answer": "ong" },
+            { "options": ["ong", "o", "eng"], "answer": "ong" }
+          ]
+        }
+      ]
+    }
+  ]
+}
