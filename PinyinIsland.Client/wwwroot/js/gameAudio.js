@@ -402,11 +402,14 @@ window.gameAudio = {
     },
 
     playBgm: function (audioSrc, volume) {
+        var fullSrc = new URL(audioSrc, window.location.href).href;
         if (!this.bgmAudio) {
             this.bgmAudio = new Audio(audioSrc);
             this.bgmAudio.loop = true;
         } else {
-            if (this.bgmAudio.src !== new URL(audioSrc, window.location.href).href) {
+            if (this.bgmAudio.src !== fullSrc) {
+                this.bgmAudio.pause();
+                this.bgmAudio.currentTime = 0;
                 this.bgmAudio.src = audioSrc;
             }
         }
@@ -426,6 +429,33 @@ window.gameAudio = {
                 document.addEventListener('touchstart', resumeOnInteraction, { once: true });
             });
         }
+    },
+
+    playVictoryBgm: function (isBoss, volume) {
+        var src = isBoss ? "assets/audio/bgm-victory-boss.mp3" : "assets/audio/bgm-victory-stage.mp3";
+        var vol = volume !== undefined ? volume : (isBoss ? 0.42 : 0.38);
+        this.playBgm(src, vol);
+    },
+
+    fadeOutBgm: function (durationMs) {
+        if (!this.bgmAudio || this.bgmAudio.paused) return;
+        var self = this;
+        var duration = durationMs || 500;
+        var startVol = this.bgmAudio.volume;
+        var steps = 10;
+        var stepTime = duration / steps;
+        var stepCount = 0;
+        var fadeInterval = setInterval(function () {
+            stepCount++;
+            if (self.bgmAudio && !self.bgmAudio.paused) {
+                self.bgmAudio.volume = Math.max(0, startVol * (1 - stepCount / steps));
+            }
+            if (stepCount >= steps) {
+                clearInterval(fadeInterval);
+                self.pauseBgm();
+                if (self.bgmAudio) self.bgmAudio.volume = startVol;
+            }
+        }, stepTime);
     },
 
     setBgmMuted: function (isMuted) {

@@ -3,7 +3,7 @@ using Microsoft.JSInterop;
 
 namespace PinyinIsland.Client.Components.Dialogs;
 
-public partial class StageClearDialog : ComponentBase
+public partial class StageClearDialog : ComponentBase, IAsyncDisposable
 {
     [Parameter] public int StarsEarned { get; set; } = 3;
     [Parameter] public int TotalQuestions { get; set; } = 4;
@@ -35,12 +35,12 @@ public partial class StageClearDialog : ComponentBase
     {
         if (IsBossStage)
         {
-            // Start the boss chest unlocking sequence followed by stars
+            // Start the boss chest unlocking sequence followed by stars & victory BGM
             await TriggerBossChestAnimation();
         }
         else
         {
-            // Standard stage: play progressive star pop sounds immediately
+            // Standard stage: play progressive star pop sounds immediately then victory BGM
             await PlayStarRevealSounds();
         }
     }
@@ -74,6 +74,14 @@ public partial class StageClearDialog : ComponentBase
             }
             catch { }
         }
+
+        // Start celebration Victory BGM after stars and fanfare
+        await Task.Delay(200);
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.playVictoryBgm", IsBossStage);
+        }
+        catch { }
     }
 
     public async Task TriggerBossChestAnimation()
@@ -105,18 +113,37 @@ public partial class StageClearDialog : ComponentBase
         }
         catch { }
 
-        // 3. Reveal stars with progressive chimes after chest opening
+        // 3. Reveal stars with progressive chimes after chest opening & start boss celebration BGM
         await Task.Delay(400);
         await PlayStarRevealSounds();
     }
 
     public async Task OnReplayClicked()
     {
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.fadeOutBgm", 300);
+        }
+        catch { }
         await OnReplay.InvokeAsync();
     }
 
     public async Task OnNextStageClicked()
     {
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.fadeOutBgm", 300);
+        }
+        catch { }
         await OnNextStage.InvokeAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("gameAudio.fadeOutBgm", 300);
+        }
+        catch { }
     }
 }
