@@ -53,7 +53,10 @@ public class QuestionData
     public string? DisplayText { get; set; }
 
     [JsonPropertyName("options")]
-    public object? RawOptions { get; set; }
+    public List<string> Options { get; set; } = new();
+
+    [JsonPropertyName("options_audio")]
+    public List<string>? OptionsAudio { get; set; }
 
     [JsonPropertyName("answer")]
     public string? Answer { get; set; }
@@ -64,8 +67,23 @@ public class QuestionData
     [JsonPropertyName("correct_order")]
     public List<string>? CorrectOrder { get; set; }
 
+    [JsonPropertyName("pairs")]
+    public List<CardMatchPair>? Pairs { get; set; }
+
     [JsonPropertyName("variants")]
     public List<QuestionVariant>? Variants { get; set; }
+}
+
+public class CardMatchPair
+{
+    [JsonPropertyName("char")]
+    public string Char { get; set; } = string.Empty;
+
+    [JsonPropertyName("audio")]
+    public string Audio { get; set; } = string.Empty;
+
+    [JsonPropertyName("thai")]
+    public string Thai { get; set; } = string.Empty;
 }
 
 public class QuestionVariant

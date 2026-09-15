@@ -135,11 +135,11 @@ public partial class GamePlay : ComponentBase, IAsyncDisposable
         // Check if we have repository questions from stages.json
         if (StageDetails != null && StageDetails.Questions.Count > 0)
         {
-            var listenPickQuestions = StageDetails.Questions
-                .Where(q => q.Type == "listen_pick")
+            var quizQuestions = StageDetails.Questions
+                .Where(q => q.Type == "listen_pick" || q.Type == "pick_sound")
                 .ToList();
 
-            foreach (var q in listenPickQuestions)
+            foreach (var q in quizQuestions)
             {
                 var optionsList = new List<string>();
                 var answer = q.Answer ?? q.TargetChar ?? "";
@@ -151,19 +151,9 @@ public partial class GamePlay : ComponentBase, IAsyncDisposable
                     optionsList = new List<string>(variant.Options);
                     answer = variant.Answer;
                 }
-                else if (q.RawOptions is JsonElement jsonElem && jsonElem.ValueKind == JsonValueKind.Array)
+                else if (q.Options.Count > 0)
                 {
-                    foreach (var item in jsonElem.EnumerateArray())
-                    {
-                        if (item.ValueKind == JsonValueKind.String)
-                        {
-                            optionsList.Add(item.GetString() ?? "");
-                        }
-                        else if (item.ValueKind == JsonValueKind.Object && item.TryGetProperty("text", out var textProp))
-                        {
-                            optionsList.Add(textProp.GetString() ?? "");
-                        }
-                    }
+                    optionsList = new List<string>(q.Options);
                 }
 
                 if (optionsList.Count == 0 && !string.IsNullOrEmpty(q.TargetChar))

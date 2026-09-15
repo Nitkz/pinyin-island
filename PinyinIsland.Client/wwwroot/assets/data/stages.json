@@ -99,7 +99,7 @@
           "id": 8,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/t.mp3",
-          "thai_sound": "เธอ",
+          "thai_sound": "เทอ",
           "target_char": "t",
           "options": ["d", "t", "l"],
           "answer": "t",
@@ -145,6 +145,13 @@
       "questions": [
         {
           "id": 11,
+          "type": "sequence",
+          "prompt_text": "เรียงลำดับพยัญชนะโคนลิ้น",
+          "items": ["g", "k", "h"],
+          "correct_order": ["g", "k", "h"]
+        },
+        {
+          "id": 12,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/g.mp3",
           "thai_sound": "เกอ",
@@ -157,7 +164,7 @@
           ]
         },
         {
-          "id": 12,
+          "id": 13,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/k.mp3",
           "thai_sound": "เคอ",
@@ -170,7 +177,7 @@
           ]
         },
         {
-          "id": 13,
+          "id": 14,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/h.mp3",
           "thai_sound": "เฮอ",
@@ -192,7 +199,14 @@
       "game_mode": "listen_pick",
       "questions": [
         {
-          "id": 14,
+          "id": 15,
+          "type": "sequence",
+          "prompt_text": "เรียงลำดับพยัญชนะหน้าลิ้น",
+          "items": ["j", "q", "x"],
+          "correct_order": ["j", "q", "x"]
+        },
+        {
+          "id": 16,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/j.mp3",
           "thai_sound": "จี",
@@ -205,7 +219,7 @@
           ]
         },
         {
-          "id": 15,
+          "id": 17,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/q.mp3",
           "thai_sound": "ชี",
@@ -218,7 +232,7 @@
           ]
         },
         {
-          "id": 16,
+          "id": 18,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/x.mp3",
           "thai_sound": "ซี",
@@ -240,14 +254,14 @@
       "game_mode": "listen_pick",
       "questions": [
         {
-          "id": 17,
+          "id": 19,
           "type": "sequence",
           "prompt_text": "เรียงลำดับพยัญชนะม้วนลิ้น",
           "items": ["zh", "ch", "sh", "r"],
           "correct_order": ["zh", "ch", "sh", "r"]
         },
         {
-          "id": 18,
+          "id": 20,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/zh.mp3",
           "thai_sound": "จรือ",
@@ -260,7 +274,7 @@
           ]
         },
         {
-          "id": 19,
+          "id": 21,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/ch.mp3",
           "thai_sound": "ชรือ",
@@ -273,7 +287,7 @@
           ]
         },
         {
-          "id": 20,
+          "id": 22,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/sh.mp3",
           "thai_sound": "ซรือ",
@@ -286,7 +300,7 @@
           ]
         },
         {
-          "id": 21,
+          "id": 23,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/r.mp3",
           "thai_sound": "ยรือ",
@@ -308,7 +322,14 @@
       "game_mode": "listen_pick",
       "questions": [
         {
-          "id": 22,
+          "id": 24,
+          "type": "sequence",
+          "prompt_text": "เรียงลำดับพยัญชนะฟันสู้ฟัน",
+          "items": ["z", "c", "s"],
+          "correct_order": ["z", "c", "s"]
+        },
+        {
+          "id": 25,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/z.mp3",
           "thai_sound": "จือ",
@@ -321,10 +342,10 @@
           ]
         },
         {
-          "id": 23,
+          "id": 26,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/c.mp3",
-          "thai_sound": "ชือ",
+          "thai_sound": "ชื่อ",
           "target_char": "c",
           "options": ["z", "c", "s"],
           "answer": "c",
@@ -334,7 +355,7 @@
           ]
         },
         {
-          "id": 24,
+          "id": 27,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/s.mp3",
           "thai_sound": "ซือ",
@@ -356,7 +377,7 @@
       "game_mode": "listen_pick",
       "questions": [
         {
-          "id": 25,
+          "id": 28,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/y.mp3",
           "thai_sound": "อี / ยา",
@@ -369,7 +390,7 @@
           ]
         },
         {
-          "id": 26,
+          "id": 29,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/initials/w.mp3",
           "thai_sound": "อู / วา",
@@ -379,6 +400,15 @@
           "variants": [
             { "options": ["m", "w", "v"], "answer": "w" },
             { "options": ["w", "f", "y"], "answer": "w" }
+          ]
+        },
+        {
+          "id": 30,
+          "type": "card_match",
+          "prompt_text": "เปิดการ์ดจับคู่พยัญชนะพิเศษ",
+          "pairs": [
+            { "char": "y", "audio": "assets/audio/initials/y.mp3", "thai": "อี / ยา" },
+            { "char": "w", "audio": "assets/audio/initials/w.mp3", "thai": "อู / วา" }
           ]
         }
       ]
@@ -391,7 +421,7 @@
       "game_mode": "listen_pick",
       "questions": [
         {
-          "id": 27,
+          "id": 31,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/a.mp3",
           "thai_sound": "อา",
@@ -404,7 +434,7 @@
           ]
         },
         {
-          "id": 28,
+          "id": 32,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/o.mp3",
           "thai_sound": "โอ",
@@ -417,7 +447,7 @@
           ]
         },
         {
-          "id": 29,
+          "id": 33,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/e.mp3",
           "thai_sound": "เออ",
@@ -430,18 +460,29 @@
           ]
         },
         {
-          "id": 30,
-          "type": "listen_pick",
+          "id": 34,
+          "type": "pick_sound",
           "display_text": "a",
           "prompt_audio": "assets/audio/finals/a.mp3",
           "thai_sound": "อา",
           "target_char": "a",
-          "options": [
-            { "text": "อา", "audio": "assets/audio/finals/a.mp3" },
-            { "text": "เออ", "audio": "assets/audio/finals/e.mp3" },
-            { "text": "อี", "audio": "assets/audio/finals/i.mp3" }
+          "options": ["a", "e", "i"],
+          "options_audio": [
+            "assets/audio/finals/a.mp3",
+            "assets/audio/finals/e.mp3",
+            "assets/audio/finals/i.mp3"
           ],
-          "answer": "อา"
+          "answer": "a"
+        },
+        {
+          "id": 35,
+          "type": "card_match",
+          "prompt_text": "เปิดการ์ดจับคู่สระเดี่ยว",
+          "pairs": [
+            { "char": "a", "audio": "assets/audio/finals/a.mp3", "thai": "อา" },
+            { "char": "o", "audio": "assets/audio/finals/o.mp3", "thai": "โอ" },
+            { "char": "e", "audio": "assets/audio/finals/e.mp3", "thai": "เออ" }
+          ]
         }
       ]
     },
@@ -453,7 +494,7 @@
       "game_mode": "listen_pick",
       "questions": [
         {
-          "id": 31,
+          "id": 36,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/i.mp3",
           "thai_sound": "อี",
@@ -466,7 +507,7 @@
           ]
         },
         {
-          "id": 32,
+          "id": 37,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/u.mp3",
           "thai_sound": "อู",
@@ -479,7 +520,7 @@
           ]
         },
         {
-          "id": 33,
+          "id": 38,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/v.mp3",
           "thai_sound": "อวี (ปากจู๋)",
@@ -489,6 +530,16 @@
           "variants": [
             { "options": ["ü", "u", "e"], "answer": "ü" },
             { "options": ["i", "ü", "o"], "answer": "ü" }
+          ]
+        },
+        {
+          "id": 39,
+          "type": "card_match",
+          "prompt_text": "เปิดการ์ดจับคู่สระเดี่ยว",
+          "pairs": [
+            { "char": "i", "audio": "assets/audio/finals/i.mp3", "thai": "อี" },
+            { "char": "u", "audio": "assets/audio/finals/u.mp3", "thai": "อู" },
+            { "char": "ü", "audio": "assets/audio/finals/v.mp3", "thai": "อวี" }
           ]
         }
       ]
@@ -501,14 +552,14 @@
       "game_mode": "sequence",
       "questions": [
         {
-          "id": 34,
+          "id": 40,
           "type": "sequence",
           "prompt_text": "เรียงลำดับ 6 สระเดี่ยว",
           "items": ["a", "o", "e", "i", "u", "ü"],
           "correct_order": ["a", "o", "e", "i", "u", "ü"]
         },
         {
-          "id": 35,
+          "id": 41,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/o.mp3",
           "thai_sound": "โอ",
@@ -518,6 +569,19 @@
           "variants": [
             { "options": ["a", "o", "u"], "answer": "o" },
             { "options": ["e", "o", "ü"], "answer": "o" }
+          ]
+        },
+        {
+          "id": 42,
+          "type": "card_match",
+          "prompt_text": "เปิดการ์ดจับคู่ 6 สระเดี่ยว",
+          "pairs": [
+            { "char": "a", "audio": "assets/audio/finals/a.mp3", "thai": "อา" },
+            { "char": "o", "audio": "assets/audio/finals/o.mp3", "thai": "โอ" },
+            { "char": "e", "audio": "assets/audio/finals/e.mp3", "thai": "เออ" },
+            { "char": "i", "audio": "assets/audio/finals/i.mp3", "thai": "อี" },
+            { "char": "u", "audio": "assets/audio/finals/u.mp3", "thai": "อู" },
+            { "char": "ü", "audio": "assets/audio/finals/v.mp3", "thai": "อวี" }
           ]
         }
       ]
@@ -530,7 +594,7 @@
       "game_mode": "listen_pick",
       "questions": [
         {
-          "id": 36,
+          "id": 43,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ai.mp3",
           "thai_sound": "ไอ",
@@ -543,7 +607,7 @@
           ]
         },
         {
-          "id": 37,
+          "id": 44,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ei.mp3",
           "thai_sound": "เอย",
@@ -556,7 +620,7 @@
           ]
         },
         {
-          "id": 38,
+          "id": 45,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ui.mp3",
           "thai_sound": "อุย / เวย",
@@ -569,7 +633,7 @@
           ]
         },
         {
-          "id": 39,
+          "id": 46,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ao.mp3",
           "thai_sound": "เอา",
@@ -579,6 +643,17 @@
           "variants": [
             { "options": ["ou", "ao", "ai"], "answer": "ao" },
             { "options": ["ao", "ang", "au"], "answer": "ao" }
+          ]
+        },
+        {
+          "id": 47,
+          "type": "card_match",
+          "prompt_text": "เปิดการ์ดจับคู่สระผสม",
+          "pairs": [
+            { "char": "ai", "audio": "assets/audio/finals/ai.mp3", "thai": "ไอ" },
+            { "char": "ei", "audio": "assets/audio/finals/ei.mp3", "thai": "เอย" },
+            { "char": "ui", "audio": "assets/audio/finals/ui.mp3", "thai": "อุย / เวย" },
+            { "char": "ao", "audio": "assets/audio/finals/ao.mp3", "thai": "เอา" }
           ]
         }
       ]
@@ -591,7 +666,7 @@
       "game_mode": "listen_pick",
       "questions": [
         {
-          "id": 40,
+          "id": 48,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ou.mp3",
           "thai_sound": "โอว",
@@ -604,7 +679,7 @@
           ]
         },
         {
-          "id": 41,
+          "id": 49,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/iu.mp3",
           "thai_sound": "อิว",
@@ -617,7 +692,7 @@
           ]
         },
         {
-          "id": 42,
+          "id": 50,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ie.mp3",
           "thai_sound": "เอีย",
@@ -630,7 +705,7 @@
           ]
         },
         {
-          "id": 43,
+          "id": 51,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ue.mp3",
           "thai_sound": "เอวีย",
@@ -643,7 +718,7 @@
           ]
         },
         {
-          "id": 44,
+          "id": 52,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/er.mp3",
           "thai_sound": "เออร์ (ม้วนลิ้น)",
@@ -656,18 +731,31 @@
           ]
         },
         {
-          "id": 45,
-          "type": "listen_pick",
+          "id": 53,
+          "type": "pick_sound",
           "display_text": "ei",
           "prompt_audio": "assets/audio/finals/ei.mp3",
           "thai_sound": "เอย",
           "target_char": "ei",
-          "options": [
-            { "text": "เอย", "audio": "assets/audio/finals/ei.mp3" },
-            { "text": "ไอ", "audio": "assets/audio/finals/ai.mp3" },
-            { "text": "เวย", "audio": "assets/audio/finals/ui.mp3" }
+          "options": ["ei", "ai", "ui"],
+          "options_audio": [
+            "assets/audio/finals/ei.mp3",
+            "assets/audio/finals/ai.mp3",
+            "assets/audio/finals/ui.mp3"
           ],
-          "answer": "เอย"
+          "answer": "ei"
+        },
+        {
+          "id": 54,
+          "type": "card_match",
+          "prompt_text": "เปิดการ์ดจับคู่สระผสม",
+          "pairs": [
+            { "char": "ou", "audio": "assets/audio/finals/ou.mp3", "thai": "โอว" },
+            { "char": "iu", "audio": "assets/audio/finals/iu.mp3", "thai": "อิว" },
+            { "char": "ie", "audio": "assets/audio/finals/ie.mp3", "thai": "เอีย" },
+            { "char": "üe", "audio": "assets/audio/finals/ue.mp3", "thai": "เอวีย" },
+            { "char": "er", "audio": "assets/audio/finals/er.mp3", "thai": "เออร์" }
+          ]
         }
       ]
     },
@@ -679,7 +767,7 @@
       "game_mode": "listen_pick",
       "questions": [
         {
-          "id": 46,
+          "id": 55,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/an.mp3",
           "thai_sound": "อัน",
@@ -692,7 +780,7 @@
           ]
         },
         {
-          "id": 47,
+          "id": 56,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/en.mp3",
           "thai_sound": "เอิน",
@@ -705,7 +793,7 @@
           ]
         },
         {
-          "id": 48,
+          "id": 57,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/in.mp3",
           "thai_sound": "อิน",
@@ -718,7 +806,7 @@
           ]
         },
         {
-          "id": 49,
+          "id": 58,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/un.mp3",
           "thai_sound": "อุน / เวน",
@@ -728,6 +816,31 @@
           "variants": [
             { "options": ["in", "un", "en"], "answer": "un" },
             { "options": ["un", "u", "ou"], "answer": "un" }
+          ]
+        },
+        {
+          "id": 59,
+          "type": "listen_pick",
+          "prompt_audio": "assets/audio/finals/vn.mp3",
+          "thai_sound": "ยวิน",
+          "target_char": "ün",
+          "options": ["ün", "un", "in"],
+          "answer": "ün",
+          "variants": [
+            { "options": ["ün", "ui", "üe"], "answer": "ün" },
+            { "options": ["ün", "un", "u"], "answer": "ün" }
+          ]
+        },
+        {
+          "id": 60,
+          "type": "card_match",
+          "prompt_text": "เปิดการ์ดจับคู่สระขึ้นจมูก",
+          "pairs": [
+            { "char": "an", "audio": "assets/audio/finals/an.mp3", "thai": "อัน" },
+            { "char": "en", "audio": "assets/audio/finals/en.mp3", "thai": "เอิน" },
+            { "char": "in", "audio": "assets/audio/finals/in.mp3", "thai": "อิน" },
+            { "char": "un", "audio": "assets/audio/finals/un.mp3", "thai": "อุน" },
+            { "char": "ün", "audio": "assets/audio/finals/vn.mp3", "thai": "ยวิน" }
           ]
         }
       ]
@@ -740,21 +853,22 @@
       "game_mode": "listen_pick",
       "questions": [
         {
-          "id": 50,
-          "type": "listen_pick",
+          "id": 61,
+          "type": "pick_sound",
           "display_text": "ang",
           "prompt_audio": "assets/audio/finals/ang.mp3",
           "thai_sound": "อัง",
           "target_char": "ang",
-          "options": [
-            { "text": "อัง", "audio": "assets/audio/finals/ang.mp3" },
-            { "text": "อง", "audio": "assets/audio/finals/ong.mp3" },
-            { "text": "อิง", "audio": "assets/audio/finals/ing.mp3" }
+          "options": ["ang", "ong", "ing"],
+          "options_audio": [
+            "assets/audio/finals/ang.mp3",
+            "assets/audio/finals/ong.mp3",
+            "assets/audio/finals/ing.mp3"
           ],
-          "answer": "อัง"
+          "answer": "ang"
         },
         {
-          "id": 51,
+          "id": 62,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/eng.mp3",
           "thai_sound": "เอิง",
@@ -767,7 +881,7 @@
           ]
         },
         {
-          "id": 52,
+          "id": 63,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ing.mp3",
           "thai_sound": "อิง",
@@ -780,7 +894,7 @@
           ]
         },
         {
-          "id": 53,
+          "id": 64,
           "type": "listen_pick",
           "prompt_audio": "assets/audio/finals/ong.mp3",
           "thai_sound": "โอง / อุง",
@@ -790,6 +904,17 @@
           "variants": [
             { "options": ["ang", "ong", "un"], "answer": "ong" },
             { "options": ["ong", "o", "eng"], "answer": "ong" }
+          ]
+        },
+        {
+          "id": 65,
+          "type": "card_match",
+          "prompt_text": "เปิดการ์ดจับคู่สระแม่กง",
+          "pairs": [
+            { "char": "ang", "audio": "assets/audio/finals/ang.mp3", "thai": "อัง" },
+            { "char": "eng", "audio": "assets/audio/finals/eng.mp3", "thai": "เอิง" },
+            { "char": "ing", "audio": "assets/audio/finals/ing.mp3", "thai": "อิง" },
+            { "char": "ong", "audio": "assets/audio/finals/ong.mp3", "thai": "โอง" }
           ]
         }
       ]
