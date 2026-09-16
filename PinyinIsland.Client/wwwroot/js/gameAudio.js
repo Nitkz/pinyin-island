@@ -2,6 +2,39 @@ window.gameAudio = {
     audioCtx: null,
     bgmAudio: null,
     currentVoiceAudio: null,
+    voiceAudioPool: null,
+    audioBufferCache: {},
+    isAudioUnlocked: false,
+
+    initAudioUnlock: function () {
+        if (this.isAudioUnlocked) return;
+        var self = this;
+        var unlockHandler = function () {
+            // Unlock Web Audio Context
+            var ctx = self.getAudioContext();
+            if (ctx && ctx.state === 'suspended') {
+                ctx.resume();
+            }
+
+            // Unlock shared HTMLAudioElement for iOS Safari
+            if (!self.voiceAudioPool) {
+                self.voiceAudioPool = new Audio();
+            }
+            // Playing a silent 1-sample data URI unlocks future programmatic .play() on iOS
+            self.voiceAudioPool.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+            self.voiceAudioPool.play().then(function () {
+                self.isAudioUnlocked = true;
+            }).catch(function () {});
+
+            document.removeEventListener('touchstart', unlockHandler, true);
+            document.removeEventListener('touchend', unlockHandler, true);
+            document.removeEventListener('click', unlockHandler, true);
+        };
+
+        document.addEventListener('touchstart', unlockHandler, true);
+        document.addEventListener('touchend', unlockHandler, true);
+        document.addEventListener('click', unlockHandler, true);
+    },
 
     getAudioContext: function () {
         if (!this.audioCtx) {
@@ -18,23 +51,69 @@ window.gameAudio = {
 
     playVoiceAudio: function (audioSrc) {
         if (!audioSrc) return;
+        var self = this;
         try {
             var ctx = this.getAudioContext();
-            if (this.currentVoiceAudio) {
-                this.currentVoiceAudio.pause();
-                this.currentVoiceAudio.currentTime = 0;
-            }
             var fullUrl = new URL(audioSrc, document.baseURI).href;
-            this.currentVoiceAudio = new Audio(fullUrl);
-            this.currentVoiceAudio.volume = 1.0;
-            var playPromise = this.currentVoiceAudio.play();
+
+            if (!this.voiceAudioPool) {
+                this.voiceAudioPool = new Audio();
+            }
+
+            var audio = this.voiceAudioPool;
+            audio.pause();
+            audio.currentTime = 0;
+            audio.src = fullUrl;
+            audio.volume = 1.0;
+
+            var playPromise = audio.play();
             if (playPromise !== undefined) {
                 playPromise.catch(function (err) {
-                    console.log("Audio play error for voice:", fullUrl, err);
+                    console.log("HTMLAudio play blocked on iOS, falling back to WebAudio decode:", fullUrl, err);
+                    self.playVoiceWebAudioFallback(fullUrl);
                 });
             }
         } catch (e) {
             console.error("playVoiceAudio exception:", e);
+            self.playVoiceWebAudioFallback(new URL(audioSrc, document.baseURI).href);
+        }
+    },
+
+    playVoiceWebAudioFallback: function (fullUrl) {
+        var self = this;
+        var ctx = this.getAudioContext();
+        if (!ctx) return;
+
+        if (this.audioBufferCache[fullUrl]) {
+            self.playAudioBuffer(this.audioBufferCache[fullUrl]);
+            return;
+        }
+
+        fetch(fullUrl)
+            .then(function (res) { return res.arrayBuffer(); })
+            .then(function (arrayBuf) { return ctx.decodeAudioData(arrayBuf); })
+            .then(function (audioBuf) {
+                self.audioBufferCache[fullUrl] = audioBuf;
+                self.playAudioBuffer(audioBuf);
+            })
+            .catch(function (err) {
+                console.error("WebAudio fallback failed for:", fullUrl, err);
+            });
+    },
+
+    playAudioBuffer: function (audioBuf) {
+        var ctx = this.getAudioContext();
+        if (!ctx || !audioBuf) return;
+        try {
+            var srcNode = ctx.createBufferSource();
+            srcNode.buffer = audioBuf;
+            var gainNode = ctx.createGain();
+            gainNode.gain.setValueAtTime(1.0, ctx.currentTime);
+            srcNode.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            srcNode.start(0);
+        } catch (e) {
+            console.error("playAudioBuffer error:", e);
         }
     },
 
