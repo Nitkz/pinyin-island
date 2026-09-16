@@ -4,7 +4,7 @@ using PinyinIsland.Client.Models;
 
 namespace PinyinIsland.Client.Components.GameModes;
 
-public partial class TrainSequence : ComponentBase
+public partial class TrainSequence : ComponentBase, IAsyncDisposable
 {
     [Inject] private IJSRuntime JS { get; set; } = default!;
 
@@ -48,6 +48,56 @@ public partial class TrainSequence : ComponentBase
         _hasFailed = false;
     }
 
+    private IJSObjectReference? _trainModule;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                _trainModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/trainSequence.js");
+            }
+            catch { }
+        }
+    }
+
+    private async Task ScrollToSlot(int slotIndex)
+    {
+        if (_trainModule != null)
+        {
+            try
+            {
+                await _trainModule.InvokeVoidAsync("scrollToWagonSlot", slotIndex);
+            }
+            catch { }
+        }
+    }
+
+    private async Task ScrollToFront()
+    {
+        if (_trainModule != null)
+        {
+            try
+            {
+                await _trainModule.InvokeVoidAsync("scrollToTrainFront");
+            }
+            catch { }
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_trainModule != null)
+        {
+            try
+            {
+                await _trainModule.DisposeAsync();
+            }
+            catch { }
+        }
+    }
+
     public async Task PlaceBlock(string letter)
     {
         if (_isLocked || !AvailableLetters.Contains(letter)) return;
@@ -67,6 +117,9 @@ public partial class TrainSequence : ComponentBase
                 await JS.InvokeVoidAsync("gameAudio.playPinyinAudio", letter);
             }
             catch { }
+
+            // Auto scroll the placed wagon slot smoothly into viewport
+            await ScrollToSlot(emptySlotIndex);
 
             StateHasChanged();
 
@@ -99,14 +152,10 @@ public partial class TrainSequence : ComponentBase
 
     private async Task CheckTrainSequence()
     {
-        if (Question == null) return;
-
-        var expectedOrder = Question.CorrectOrder;
-        bool isCorrect = true;
-
-        for (int i = 0; i < expectedOrder.Count; i++)
+        var isCorrect = true;
+        for (int i = 0; i < Question.CorrectOrder.Count; i++)
         {
-            if (PlacedLetters[i] != expectedOrder[i])
+            if (PlacedLetters[i] != Question.CorrectOrder[i])
             {
                 isCorrect = false;
                 break;
@@ -133,6 +182,7 @@ public partial class TrainSequence : ComponentBase
 
                     try
                     {
+                        await ScrollToSlot(i);
                         await JS.InvokeVoidAsync("gameAudio.playPinyinAudio", letter);
                     }
                     catch { }
@@ -206,6 +256,9 @@ public partial class TrainSequence : ComponentBase
                     PlacedLetters[i] = null;
                 }
             }
+
+            // Scroll back smoothly to front of train
+            await ScrollToFront();
 
             _isLocked = false;
             StateHasChanged();

@@ -282,6 +282,7 @@
         user-select: none;
         -webkit-user-select: none;
         font-family: 'Fredoka', 'Prompt', sans-serif;
+        padding-top: 80px; /* Space for fixed top bar */
     }
 
     /* Ambient animated ocean overlay for lively feeling */
@@ -294,17 +295,22 @@
         z-index: 1;
     }
 
-    /* Top Navigation Bar */
+    /* Fixed Top Navigation Bar */
     .map-top-bar {
-        position: relative;
-        z-index: 10;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        box-sizing: border-box;
+        z-index: 100;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 16px 24px;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        padding: calc(12px + env(safe-area-inset-top, 0px)) calc(20px + env(safe-area-inset-right, 0px)) 12px calc(20px + env(safe-area-inset-left, 0px));
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
         border-bottom: 4px solid #b3e5fc;
         box-shadow: 0 8px 24px rgba(0, 78, 128, 0.15);
     }
@@ -1155,9 +1161,9 @@
        Responsive Breakpoints (Grade 1 Kids & Tablets)
        ========================================================================== */
 
-    @@media (max-width: 900px) {
+    @@media (max-width: 900px) and (orientation: portrait) {
         .map-top-bar {
-            padding: 12px 16px;
+            padding: calc(10px + env(safe-area-inset-top, 0px)) calc(14px + env(safe-area-inset-right, 0px)) 10px calc(14px + env(safe-area-inset-left, 0px));
         }
 
         .badge-title {
@@ -1185,9 +1191,18 @@
         }
     }
 
-    @@media (max-width: 600px) {
+    /* Small Screen Portrait (Under 600px portrait) */
+    @@media (max-width: 600px) and (orientation: portrait) {
+        .map-page-container {
+            padding-top: calc(64px + env(safe-area-inset-top, 0px));
+        }
+
         .map-top-bar {
-            padding: 10px 14px;
+            padding: calc(8px + env(safe-area-inset-top, 0px)) calc(10px + env(safe-area-inset-right, 0px)) 8px calc(10px + env(safe-area-inset-left, 0px));
+            gap: 8px;
+        }
+        .top-bar-left, .top-bar-right {
+            gap: 8px;
         }
         .page-title-badge {
             display: none;
@@ -1198,17 +1213,39 @@
         .backpack-label {
             display: none;
         }
+        .backpack-counter {
+            font-size: 0.95rem;
+        }
         .total-stars-chip {
-            padding: 4px 12px;
+            padding: 4px 10px;
+            gap: 4px;
+        }
+        .star-count-num {
+            font-size: 1.15rem;
+        }
+        .star-max-label {
+            display: none;
         }
         .tactile-round-btn {
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
         }
-        .map-instruction-pill {
-            font-size: 0.95rem;
-            padding: 8px 16px;
-            text-align: center;
+        .top-btn-icon {
+            font-size: 1.4rem !important;
+        }
+
+        .captain-guide-banner {
+            max-width: 92vw;
+            padding: 6px 14px 6px 8px;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .captain-avatar-circle {
+            width: 46px;
+            height: 46px;
+        }
+        .captain-msg {
+            font-size: 0.85rem;
         }
 
         .island-connector-trail {
@@ -1217,33 +1254,281 @@
 
         .islands-track {
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
         }
 
         .island-card {
-            width: 290px;
+            width: 280px;
         }
 
         .stage-sheet-container {
-            max-height: 90vh;
+            max-height: 88vh;
             border-top-left-radius: 28px;
             border-top-right-radius: 28px;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         .sheet-header {
-            padding: 16px 20px;
+            padding: 14px 18px;
         }
 
         .sheet-island-name {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
+        }
+
+        .sheet-badge-icon {
+            font-size: 2rem;
         }
 
         .stages-grid-scroll {
-            padding: 16px 20px 30px;
+            padding: 14px 16px 24px;
+            max-height: calc(88vh - 90px - env(safe-area-inset-bottom, 0px));
         }
 
         .stages-grid {
             grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .tactile-stage-btn {
+            padding: 14px 16px;
+        }
+    }
+
+    /* Landscape Auto-Scale Mode (Smartphones & Compact Tablets in Landscape) */
+    @@media (max-height: 540px) and (orientation: landscape) {
+        .map-page-container {
+            padding-top: calc(52px + env(safe-area-inset-top, 0px));
+            min-height: 100vh;
+        }
+
+        .map-top-bar {
+            padding: calc(4px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) 4px calc(12px + env(safe-area-inset-left, 0px));
+            border-bottom-width: 3px;
+        }
+
+        .top-bar-left, .top-bar-right {
+            gap: 8px;
+        }
+
+        .page-title-badge {
+            padding: 4px 12px;
+            border-width: 2px;
+            gap: 6px;
+        }
+        .badge-icon {
+            font-size: 1.1rem;
+        }
+        .badge-title {
+            font-size: 0.95rem;
+        }
+
+        .tactile-backpack-btn {
+            padding: 3px 10px;
+            border-width: 2px;
+            box-shadow: 0 3px 0 #BF360C, 0 4px 8px rgba(230, 81, 0, 0.35);
+        }
+        .backpack-emoji-anim {
+            font-size: 1.2rem;
+        }
+        .backpack-label {
+            font-size: 0.72rem;
+        }
+        .backpack-counter {
+            font-size: 0.85rem;
+        }
+
+        .total-stars-chip {
+            padding: 3px 12px;
+            border-width: 2px;
+            gap: 4px;
+        }
+        .star-icon-anim {
+            font-size: 1.2rem;
+        }
+        .star-count-num {
+            font-size: 1.05rem;
+        }
+        .star-max-label {
+            font-size: 0.8rem;
+        }
+
+        .tactile-round-btn {
+            width: 38px;
+            height: 38px;
+            border-width: 2px;
+            box-shadow: 0 3px 0 #1565C0;
+        }
+        .top-btn-icon {
+            font-size: 1.25rem !important;
+        }
+
+        .map-viewport {
+            padding: 6px 12px 14px;
+            justify-content: flex-start;
+        }
+
+        .captain-guide-banner {
+            max-width: 80vw;
+            padding: 4px 14px 4px 6px;
+            gap: 8px;
+            margin-bottom: 8px;
+            border-width: 2px;
+        }
+        .captain-avatar-circle {
+            width: 36px;
+            height: 36px;
+            border-width: 2px;
+        }
+        .captain-tag {
+            font-size: 0.72rem;
+            padding: 1px 6px;
+        }
+        .captain-status-pill {
+            font-size: 0.7rem;
+        }
+        .captain-msg {
+            font-size: 0.78rem;
+            line-height: 1.2;
+        }
+
+        .islands-track-container {
+            padding: 6px 10px 14px;
+            max-width: 100%;
+        }
+
+        .islands-track {
+            flex-direction: row;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .island-connector-trail {
+            right: -16px;
+            width: 16px;
+        }
+        .trail-dot {
+            width: 5px;
+            height: 5px;
+        }
+
+        .island-card {
+            width: 195px;
+            border-radius: 18px;
+            border-width: 3px;
+        }
+
+        .island-header-badge {
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            gap: 4px;
+        }
+
+        .island-image-box {
+            height: 105px;
+        }
+
+        .island-content {
+            padding: 8px 10px 10px;
+            gap: 2px;
+        }
+
+        .island-title {
+            font-size: 0.95rem;
+        }
+
+        .island-subtitle {
+            font-size: 0.75rem;
+        }
+
+        .island-desc {
+            font-size: 0.75rem;
+            line-height: 1.2;
+            margin: 2px 0 6px;
+            min-height: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .island-star-footer {
+            padding-top: 6px;
+        }
+
+        .island-star-badge {
+            padding: 2px 6px;
+            border-width: 1.5px;
+        }
+        .footer-star-icon {
+            font-size: 0.8rem;
+        }
+        .footer-star-text {
+            font-size: 0.8rem;
+        }
+        .island-stages-count {
+            font-size: 0.78rem;
+        }
+        .flag-icon {
+            font-size: 0.9rem !important;
+        }
+
+        /* Stage Sheet Modal in Landscape */
+        .stage-sheet-container {
+            max-width: 90vw;
+            max-height: 94vh;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+        }
+        .sheet-header {
+            padding: 8px 18px;
+        }
+        .sheet-badge-icon {
+            font-size: 1.8rem;
+        }
+        .sheet-island-name {
+            font-size: 1.15rem;
+        }
+        .sheet-island-sub {
+            font-size: 0.8rem;
+        }
+        .stages-grid-scroll {
+            padding: 10px 18px 16px;
+            max-height: calc(94vh - 65px);
+        }
+        .stages-grid {
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        .tactile-stage-btn {
+            padding: 10px 12px;
+            border-radius: 16px;
+            gap: 6px;
+        }
+        .stage-btn-title {
+            font-size: 0.95rem;
+        }
+        .stage-btn-desc {
+            font-size: 0.75rem;
+            line-height: 1.2;
+        }
+        .pinyin-char-highlight {
+            font-size: 0.85rem;
+            padding: 1px 6px;
+        }
+        .stage-number-badge {
+            padding: 2px 8px;
+            font-size: 0.75rem;
+        }
+        .stage-mode-pill, .stage-boss-pill {
+            font-size: 0.68rem;
+            padding: 2px 6px;
+        }
+        .play-action-text {
+            font-size: 0.8rem;
+        }
+        .star-rating-icon {
+            font-size: 1rem;
         }
     }
 </style>

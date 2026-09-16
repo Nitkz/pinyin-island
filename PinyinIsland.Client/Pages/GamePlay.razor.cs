@@ -51,7 +51,7 @@ public partial class GamePlay : ComponentBase, IAsyncDisposable
     private bool _shouldAutoPlayFirstVideo = false;
 
     // Mascot Buddy Cheer State
-    public bool BuddyBubbleVisible { get; private set; } = true;
+    public bool BuddyBubbleVisible { get; private set; } = false; // Start collapsed so it never blocks cards on load
     public string CurrentBuddyCheer { get; private set; } = "สู้ๆ นะนักสำรวจน้อย! ✨";
     private readonly string[] _buddyCheers = new[]
     {
@@ -62,12 +62,44 @@ public partial class GamePlay : ComponentBase, IAsyncDisposable
         "สุดยอดมาก ลุยต่อไปเลย! ⭐"
     };
     private int _cheerIndex = 0;
+    private CancellationTokenSource? _bubbleCts;
 
     public async Task ToggleBuddySpeech()
     {
-        _cheerIndex = (_cheerIndex + 1) % _buddyCheers.Length;
-        CurrentBuddyCheer = _buddyCheers[_cheerIndex];
-        BuddyBubbleVisible = true;
+        _bubbleCts?.Cancel();
+        _bubbleCts?.Dispose();
+        _bubbleCts = new CancellationTokenSource();
+
+        if (BuddyBubbleVisible)
+        {
+            BuddyBubbleVisible = false;
+        }
+        else
+        {
+            _cheerIndex = (_cheerIndex + 1) % _buddyCheers.Length;
+            CurrentBuddyCheer = _buddyCheers[_cheerIndex];
+            BuddyBubbleVisible = true;
+
+            // Auto-hide cheer bubble after 3.5 seconds so it won't block screen
+            var token = _bubbleCts.Token;
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await Task.Delay(3500, token);
+                    if (!token.IsCancellationRequested)
+                    {
+                        await InvokeAsync(() =>
+                        {
+                            BuddyBubbleVisible = false;
+                            StateHasChanged();
+                        });
+                    }
+                }
+                catch { }
+            }, token);
+        }
+
         try
         {
             await JS.InvokeVoidAsync("gameAudio.playSfx", "tap");

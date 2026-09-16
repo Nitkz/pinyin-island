@@ -276,11 +276,97 @@
     }
 
     @@media (max-width: 768px) {
-        .tactile-pinyin-card {
-            min-width: 130px;
-            height: 150px;
+        .prompt-section {
+            margin-bottom: 16px;
         }
-        .pinyin-text { font-size: 3.2rem; }
-        .speaker-3d-btn { width: 110px; height: 110px; }
+        .options-container {
+            gap: 14px;
+        }
+        .tactile-pinyin-card {
+            min-width: 120px;
+            height: 140px;
+            border-radius: 22px;
+            padding: 10px;
+        }
+        .pinyin-text { 
+            font-size: 3.2rem; 
+        }
+        .speaker-3d-btn { 
+            width: 100px; 
+            height: 100px; 
+            border-width: 4px;
+        }
+        .tap-hint-pill {
+            font-size: 0.85rem;
+            padding: 4px 14px;
+            margin-top: 8px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .tactile-pinyin-card {
+            min-width: calc(50% - 10px);
+            height: 125px;
+            border-radius: 18px;
+        }
+        .pinyin-text {
+            font-size: 2.7rem;
+        }
+        .speaker-3d-btn {
+            width: 88px;
+            height: 88px;
+        }
+    }
+    
+    @@media (max-height: 540px) and (orientation: landscape) {
+        .mode-listen-tap-container {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .prompt-section {
+            margin-bottom: 4px;
+            flex-shrink: 0;
+        }
+        .speaker-3d-btn {
+            width: 76px;
+            height: 76px;
+            border-width: 4px;
+            box-shadow: 0 6px 0 #EA580C, 0 10px 18px rgba(0, 0, 0, 0.2);
+        }
+        .tap-hint-pill {
+            display: none; /* Hide helper text in landscape to maximize card space */
+        }
+        .options-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 720px;
+            flex-wrap: nowrap;
+        }
+        .tactile-pinyin-card {
+            flex: 1;
+            min-width: 90px;
+            max-width: 150px;
+            height: 105px;
+            border-radius: 20px;
+            border-width: 4px;
+            box-shadow: 0 6px 0 var(--card-shadow), 0 8px 16px rgba(0, 0, 0, 0.15);
+            padding: 6px;
+        }
+        .pinyin-text {
+            font-size: 2.8rem;
+            line-height: 1;
+        }
+        .card-ornament-badge {
+            font-size: 1.1rem;
+            top: 6px;
+            right: 8px;
+        }
     }
 </style>
