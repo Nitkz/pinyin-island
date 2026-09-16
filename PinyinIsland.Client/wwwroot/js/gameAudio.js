@@ -49,9 +49,58 @@ window.gameAudio = {
         return this.audioCtx;
     },
 
+    bgmTargetVolume: 0.45,
+    isDuckingBgm: false,
+    duckingTimer: null,
+
+    duckBgm: function (durationMs) {
+        if (!this.bgmAudio || this.bgmAudio.paused || this.bgmAudio.muted) return;
+        var self = this;
+        var duckVol = Math.min(this.bgmTargetVolume * 0.25, 0.12);
+        this.bgmAudio.volume = duckVol;
+        this.isDuckingBgm = true;
+
+        if (this.duckingTimer) {
+            clearTimeout(this.duckingTimer);
+        }
+
+        var resetDelay = durationMs || 1500;
+        this.duckingTimer = setTimeout(function () {
+            self.restoreBgm();
+        }, resetDelay);
+    },
+
+    restoreBgm: function () {
+        if (!this.bgmAudio || this.bgmAudio.paused || this.bgmAudio.muted) {
+            this.isDuckingBgm = false;
+            return;
+        }
+        var self = this;
+        var startVol = this.bgmAudio.volume;
+        var targetVol = this.bgmTargetVolume || 0.45;
+        var steps = 8;
+        var stepTime = 30;
+        var count = 0;
+        
+        var interval = setInterval(function () {
+            count++;
+            if (self.bgmAudio && !self.bgmAudio.paused) {
+                self.bgmAudio.volume = startVol + ((targetVol - startVol) * (count / steps));
+            }
+            if (count >= steps) {
+                clearInterval(interval);
+                if (self.bgmAudio) self.bgmAudio.volume = targetVol;
+                self.isDuckingBgm = false;
+            }
+        }, stepTime);
+    },
+
     playVoiceAudio: function (audioSrc) {
         if (!audioSrc) return;
         var self = this;
+        // Auto-duck BGM so phonetic sound is crisp and loud
+        this.duckBgm(1400);
+
         try {
             var ctx = this.getAudioContext();
             var fullUrl = new URL(audioSrc, document.baseURI).href;
@@ -492,7 +541,8 @@ window.gameAudio = {
                 this.bgmAudio.src = audioSrc;
             }
         }
-        this.bgmAudio.volume = volume !== undefined ? volume : 0.45;
+        this.bgmTargetVolume = volume !== undefined ? volume : 0.45;
+        this.bgmAudio.volume = this.isDuckingBgm ? Math.min(this.bgmTargetVolume * 0.25, 0.12) : this.bgmTargetVolume;
         var playPromise = this.bgmAudio.play();
         if (playPromise !== undefined) {
             playPromise.catch(function (err) {
