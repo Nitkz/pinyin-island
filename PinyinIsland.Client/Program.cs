@@ -11,7 +11,8 @@ if (OperatingSystem.IsBrowser())
 {
     try
     {
-        await JSHost.ImportAsync("interop", "./js/interop.js");
+        var interopUrl = $"{builder.HostEnvironment.BaseAddress.TrimEnd('/')}/js/interop.js";
+        await JSHost.ImportAsync("interop", interopUrl);
         if (NativeInterop.IsStandalone())
         {
             builder.RootComponents.Add<Routes>("#app");
